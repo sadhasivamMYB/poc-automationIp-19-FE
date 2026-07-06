@@ -35,11 +35,11 @@ const menus = [
         icon: <WarehouseIcon />,
         path: "/admin/initial-stock",
     },
-    // {
-    //     title: "Users",
-    //     icon: <PeopleIcon />,
-    //     path: "/admin/users",
-    // },
+    {
+        title: "Users",
+        icon: <PeopleIcon />,
+        path: "/admin/users",
+    },
     {
         title: "Compare",
         icon: <CompareIcon />,
