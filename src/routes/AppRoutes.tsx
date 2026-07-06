@@ -15,7 +15,8 @@ import AuthLayout from "../layouts/Authlayout";
 import AdminLayout from "../layouts/Adminlayout";
 import WarehouseLayout from "../layouts/WarehouseLayout";
 import Compare from "../pages/admin/compare-stock/Compare";
-
+import UsersList from "../pages/admin/users/UsersList";
+import UserForm from "../pages/admin/users/UserForm";
 const AppRoutes = () => (
   <BrowserRouter>
     <Routes>
@@ -84,6 +85,23 @@ const AppRoutes = () => (
             element={
               <AdminLayout>
                 <Compare />
+              </AdminLayout>
+            }
+          />
+
+          <Route
+            path="users"
+            element={
+              <AdminLayout>
+                <UsersList />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="users/:id"
+            element={
+              <AdminLayout>
+                <UserForm />
               </AdminLayout>
             }
           />
