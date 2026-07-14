@@ -7,6 +7,7 @@ import MasterItemForm from "../pages/admin/master-items/MasterItemForm";
 import InitialStockList from "../pages/admin/initial-stock/InitialStockList";
 import InitialStockForm from "../pages/admin/initial-stock/InitialStockForm";
 import DailyStock from "../pages/warehouse/DailyStocks";
+import CustomDateLog from "../pages/warehouse/CustomDateLog";
 
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
@@ -115,13 +116,22 @@ const AppRoutes = () => (
         }
       >
         <Route
-          path="/warehouse/*"
+          path="/warehouse/log"
           element={
             <WarehouseLayout>
               <DailyStock />
             </WarehouseLayout>
           }
         />
+        <Route
+          path="/warehouse/custom-date-log"
+          element={
+            <WarehouseLayout>
+              <CustomDateLog />
+            </WarehouseLayout>
+          }
+        />
+        <Route path="/warehouse/*" element={<Navigate to="/warehouse/log" replace />} />
       </Route>
 
     </Routes>

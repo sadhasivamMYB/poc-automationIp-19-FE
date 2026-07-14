@@ -34,6 +34,7 @@ interface ExcelUploadButtonProps {
     templateHeaders?: string[];
     templateWidths?: { wpx: number }[];
     templateFileName?: string;
+    onLocalUpload?: (parsedData: any[]) => void;
 }
 
 export default function ExcelUploadButton({
@@ -42,7 +43,8 @@ export default function ExcelUploadButton({
     uploadUrl = "/master-item/upload/excel",
     templateHeaders = ["ItemCode", "ItemName", "BottlePerCase", "IsActive"],
     templateWidths = [{ wpx: 150 }, { wpx: 300 }, { wpx: 150 }, { wpx: 100 }],
-    templateFileName = "master_item_template.xlsx"
+    templateFileName = "master_item_template.xlsx",
+    onLocalUpload
 }: ExcelUploadButtonProps) {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [fileName, setFileName] = useState("");
@@ -71,6 +73,22 @@ export default function ExcelUploadButton({
     const handleUpload = async () => {
         if (!selectedFile) {
             alert("Please select a file.");
+            return;
+        }
+
+        if (onLocalUpload) {
+            try {
+                const data = await selectedFile.arrayBuffer();
+                const workbook = XLSX.read(data, { type: "array" });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                onLocalUpload(jsonData);
+                handleClose();
+            } catch (error) {
+                console.error("Local parsing error:", error);
+                setExcelError("Failed to parse Excel file locally.");
+            }
             return;
         }
 

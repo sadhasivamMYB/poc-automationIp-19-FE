@@ -1,8 +1,8 @@
 
-
-import React from "react";
 import { Box, Typography, Grid, Paper } from "@mui/material";
-import { Inventory, Warehouse, People, Assessment } from "@mui/icons-material";
+import { Inventory, Warehouse, People } from "@mui/icons-material";
+import api from "../../services/api";
+import { useEffect, useState } from "react";
 
 const StatCard = ({ title, value, icon, color }: any) => (
     <Paper
@@ -36,10 +36,10 @@ const StatCard = ({ title, value, icon, color }: any) => (
             {icon}
         </Box>
         <Box>
-            <Typography variant="body2" color="text.secondary" fontWeight="bold">
+            <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: "bold" }}>
                 {title}
             </Typography>
-            <Typography variant="h4" fontWeight="bold">
+            <Typography variant="h4" sx={{ fontWeight: "bold" }}>
                 {value}
             </Typography>
         </Box>
@@ -47,10 +47,27 @@ const StatCard = ({ title, value, icon, color }: any) => (
 );
 
 const Dashboard = () => {
+
+    const [statsData, setStatsData] = useState<any>()
+
+    async function fetchDashboardStats() {
+
+        const result = await api.get('dashboard-stats')
+        if (result.data.success) {
+            setStatsData(result.data.data)
+
+        }
+
+    }
+    useEffect(() => {
+        fetchDashboardStats()
+    }, [])
+
+
     return (
         <Box>
             <Box sx={{ mb: 4 }}>
-                <Typography variant="h4" fontWeight="bold" gutterBottom>
+                <Typography variant="h4" gutterBottom>
                     Dashboard Overview
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
@@ -59,41 +76,32 @@ const Dashboard = () => {
             </Box>
 
             <Grid container spacing={3}>
-                <Grid item xs={12} sm={6} md={3}>
-                    <StatCard 
-                        title="Total Master Items" 
-                        value="142" 
-                        icon={<Inventory fontSize="large" />} 
-                        color="primary" 
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                    <StatCard
+                        title="Total Master Items"
+                        value={statsData?.totalMasterItems ?? 0}
+                        icon={<Inventory fontSize="large" />}
+                        color="primary"
                     />
                 </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                    <StatCard 
-                        title="Active Warehouses" 
-                        value="8" 
-                        icon={<Warehouse fontSize="large" />} 
-                        color="secondary" 
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                    <StatCard
+                        title="Active Warehouses"
+                        value={statsData?.totalWarehouses ?? 0}
+                        icon={<Warehouse fontSize="large" />}
+                        color="secondary"
                     />
                 </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                    <StatCard 
-                        title="Total Users" 
-                        value="24" 
-                        icon={<People fontSize="large" />} 
-                        color="info" 
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                    <StatCard
+                        title="Total Users"
+                        value={statsData?.totalUsers ?? 0}
+                        icon={<People fontSize="large" />}
+                        color="info"
                     />
                 </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                    <StatCard 
-                        title="Discrepancies (SAP)" 
-                        value="3" 
-                        icon={<Assessment fontSize="large" />} 
-                        color="error" 
-                    />
-                </Grid>
+
             </Grid>
-            
-            {/* We will add more charts or data grids here later */}
         </Box>
     );
 };

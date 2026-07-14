@@ -138,14 +138,14 @@ const DailyStock = () => {
     }
 
     return (
-        <Box p={4}>
+        <Box>
 
             {dialogOpen && <ConformationDialog open={dialogOpen} handleClose={() => setDialogOpen(false)} handleSubmit={handleConformationSubmit} />
             }
 
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }} >
 
-                <Box>
+                {/* <Box>
                     <Typography >
                         Warehouse : <span style={{ fontWeight: "700", }}>{warehouseDetails && warehouseDetails?.warehouseName}</span> <br></br>
                         Id : {warehouseDetails && warehouseDetails?.id}
@@ -153,7 +153,7 @@ const DailyStock = () => {
                     <Typography variant="body2" color="text.secondary">
                         Date : {new Date().toISOString().split("T")[0]}
                     </Typography>
-                </Box >
+                </Box > */}
 
                 {/* Search box */}
                 <TextField

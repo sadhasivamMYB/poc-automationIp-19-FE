@@ -6,26 +6,35 @@ import {
     Typography,
     Button,
 } from "@mui/material";
+import { useAuth } from "../../context/AuthContext";
+import { LogOut } from "lucide-react";
 
 const WarehouseHeader = () => {
-    const today = new Date().toLocaleDateString();
+
+
+    const { logout } = useAuth();
 
     return (
-        <AppBar position="static">
+        <AppBar sx={{ marginBottom: 3, p: 0, bgcolor: "transparent", boxShadow: "none" }} position="static">
             <Toolbar
                 sx={{
                     justifyContent: "space-between",
                 }}
             >
-                <Typography variant="h6">
+                <Typography variant="h6" sx={{ color: "black" }}>
                     Lagos Warehouse
                 </Typography>
 
-                <Typography>
-                    {today}
-                </Typography>
 
-                <Button color="inherit">
+
+                <Button
+                    color="error"
+                    variant="outlined"
+                    size="small"
+                    onClick={logout}
+                    startIcon={<LogOut size={16} />}
+                    sx={{ textTransform: "none", borderRadius: 2 }}
+                >
                     Logout
                 </Button>
             </Toolbar>
