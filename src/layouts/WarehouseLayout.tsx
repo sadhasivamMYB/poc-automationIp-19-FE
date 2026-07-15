@@ -1,7 +1,7 @@
-import React, { type ReactNode } from "react";
-import { Box, AppBar, Toolbar, Typography, Button, Container } from "@mui/material";
-import { useAuth } from "../context/AuthContext";
-import { LogOut, Package } from "lucide-react";
+import { type ReactNode } from "react";
+import { Box } from "@mui/material";
+// import { useAuth } from "../context/AuthContext";
+// import { LogOut, Package } from "lucide-react";
 import WarehouseSidebar from "../components/layout/WarehouseSidebar";
 import WarehouseHeader from "../components/layout/WarehouseHeader";
 

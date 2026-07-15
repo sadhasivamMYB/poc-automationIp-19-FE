@@ -35,8 +35,8 @@ const AdminHeader = () => {
                     >
                         IS
                     </Box>
-                    <Typography variant="h6" fontWeight="bold">
-                        Inventory System
+                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Stock Automation
                     </Typography>
                 </Box>
 
@@ -46,7 +46,7 @@ const AdminHeader = () => {
                             {user?.name?.charAt(0) || "A"}
                         </Avatar>
                         <Box sx={{ display: { xs: "none", sm: "block" } }}>
-                            <Typography variant="subtitle2" fontWeight="bold" sx={{ lineHeight: 1.2 }}>
+                            <Typography variant="subtitle2" sx={{ lineHeight: 1.2, fontWeight: "bold" }}>
                                 {user?.name || "Admin User"}
                             </Typography>
                             <Typography variant="caption" color="text.secondary">
@@ -54,9 +54,9 @@ const AdminHeader = () => {
                             </Typography>
                         </Box>
                     </Box>
-                    
-                    <Button 
-                        color="error" 
+
+                    <Button
+                        color="error"
                         variant="outlined"
                         size="small"
                         onClick={logout}

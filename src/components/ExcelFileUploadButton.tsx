@@ -34,7 +34,7 @@ interface ExcelUploadButtonProps {
     templateHeaders?: string[];
     templateWidths?: { wpx: number }[];
     templateFileName?: string;
-    onLocalUpload?: (parsedData: any[]) => void;
+    onLocalUpload?: (parsedData: any[], fileName?: string) => void;
 }
 
 export default function ExcelUploadButton({
@@ -83,7 +83,7 @@ export default function ExcelUploadButton({
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
                 const jsonData = XLSX.utils.sheet_to_json(worksheet);
-                onLocalUpload(jsonData);
+                onLocalUpload(jsonData, selectedFile.name);
                 handleClose();
             } catch (error) {
                 console.error("Local parsing error:", error);

@@ -7,6 +7,7 @@ import {
     ListItemText,
     Toolbar,
     Box,
+    Typography,
 } from "@mui/material";
 
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -49,8 +50,13 @@ const WarehouseSidebar = () => {
                 },
             }}
         >
+            <Typography sx={{ p: 3, fontWeight: "bold", color: "black" }}>
+                Stock Automation
+            </Typography>
+
             <Toolbar />
             <Box sx={{ overflow: "auto", mt: 2 }}>
+
                 <List sx={{ py: 2 }}>
                     {menus.map((menu) => {
                         const isActive = location.pathname === menu.path ||
