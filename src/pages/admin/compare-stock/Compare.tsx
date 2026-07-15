@@ -578,7 +578,11 @@ const Compare = () => {
                     </Select>
                 </Box>
 
-                {selectedDate && dailyStocks.length === 0 && !loading ? (
+                {!selectedDate ? (
+                    <Box sx={{ mt: 3, p: 4, bgcolor: "#f8fafc", color: "#475569", borderRadius: 2, border: "1px dashed #cbd5e1", textAlign: "center" }}>
+                        <Typography variant="body1" sx={{ fontWeight: 500 }}>Please select a date to view or compare stock.</Typography>
+                    </Box>
+                ) : dailyStocks.length === 0 && !loading ? (
                     <Box sx={{ mt: 3, p: 2, bgcolor: "#fff3cd", color: "#856404", borderRadius: 1, border: "1px solid #ffeeba", textAlign: "center" }}>
                         <Typography variant="body1" sx={{ fontWeight: 500 }}>No stock generated for the selected date.</Typography>
                     </Box>
