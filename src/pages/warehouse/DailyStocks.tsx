@@ -9,9 +9,10 @@ import {
     TableHead,
     TableRow,
     TextField,
-    Typography,
     Button,
-    InputAdornment
+    InputAdornment,
+    CircularProgress,
+    Typography
 
 } from "@mui/material";
 import api from "../../services/api";
@@ -23,19 +24,21 @@ import { SearchOutlined } from "@mui/icons-material";
 
 const DailyStock = () => {
 
-    const [rows, setRows] = useState();
-    const [warehouseDetails, setWarehouseDetails] = useState();
+    const [rows, setRows] = useState<any>();
+    // const [warehouseDetails, setWarehouseDetails] = useState<any>();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
-    const [loading, setLoading] = useState(null)
+    const [loading, setLoading] = useState<any>()
+
+    console.log()
 
     const fetchItems = async () => {
         try {
             const response = await api.get("/daily-stock/today");
             if (response.data.success) {
                 setRows(response.data.data);
-                setWarehouseDetails(response.data.warehouseDetail);
+
             }
         } catch (error) {
             console.error("Failed to fetch items", error);
@@ -49,6 +52,11 @@ const DailyStock = () => {
     }, []);
 
     console.log(rows)
+
+    const filterdData = rows?.filter(row =>
+        row.itemCode?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        row.itemName?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
 
 
     const calculateClosing = (row) => {
@@ -238,102 +246,120 @@ const DailyStock = () => {
                     </TableHead>
 
                     <TableBody>
-                        {rows?.filter(row =>
-                            row.itemCode?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            row.itemName?.toLowerCase().includes(searchQuery.toLowerCase())
-                        ).map((row) => (
-                            <TableRow
-                                hover
-                                key={row.id}
-                                sx={{
-                                    "&:nth-of-type(even)": {
-                                        bgcolor: "grey.50",
-                                    },
-                                }}
-                            >
-                                <TableCell>{row.itemCode}</TableCell>
+                        {
+                            loading ? (
+                                <TableRow>
+                                    <TableCell colSpan={11} align="center" sx={{ py: 10 }}>
+                                        <CircularProgress size={40} thickness={4} />
+                                        <Typography color="text.secondary" sx={{ mt: 2, fontWeight: 500 }}>Fetching Data...</Typography>
+                                    </TableCell>
+                                </TableRow>
 
-                                <TableCell>{row.itemName}</TableCell>
+                            ) : filterdData?.length == 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={11} align="center" sx={{ py: 3 }}>
+                                        <Typography color="text.secondary">No items to display.</Typography>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                                : filterdData?.map((row) => (
+                                    <TableRow
+                                        hover
+                                        key={row.id}
+                                        sx={{
+                                            "&:nth-of-type(even)": {
+                                                bgcolor: "grey.50",
+                                            },
+                                        }}
+                                    >
+                                        <TableCell>{row.itemCode}</TableCell>
 
-                                <TableCell align="center">
-                                    {row.bottlePerCase}
-                                </TableCell>
+                                        <TableCell>{row.itemName}</TableCell>
 
-                                {/* Opening */}
-                                <TableCell align="center">
-                                    {row.openingCases}
-                                </TableCell>
+                                        <TableCell align="center">
+                                            {row.bottlePerCase}
+                                        </TableCell>
 
-                                <TableCell align="center">
-                                    {row.openingBottles}
-                                </TableCell>
+                                        {/* Opening */}
+                                        <TableCell align="center">
+                                            {row.openingCases}
+                                        </TableCell>
 
-                                {/* Received */}
-                                <TableCell>
-                                    <TextField
-                                        size="small"
-                                        type="number"
-                                        value={row.receivedCases}
-                                        disabled={row.status === "LOCKED"}
-                                        onChange={(e) =>
-                                            handleChange(row.id, "receivedCases", e.target.value)
-                                        }
-                                        sx={{ width: 90 }}
-                                    />
-                                </TableCell>
+                                        <TableCell align="center">
+                                            {row.openingBottles}
+                                        </TableCell>
 
-                                <TableCell>
-                                    <TextField
-                                        size="small"
-                                        type="number"
-                                        value={row.receivedBottles}
-                                        disabled={row.status === "LOCKED"}
-                                        onChange={(e) =>
-                                            handleChange(row.id, "receivedBottles", e.target.value)
-                                        }
-                                        sx={{ width: 90 }}
-                                    />
-                                </TableCell>
+                                        {/* Received */}
+                                        <TableCell>
+                                            <TextField
+                                                size="small"
+                                                type="number"
+                                                value={row.receivedCases}
+                                                disabled={row.status === "LOCKED"}
+                                                onChange={(e) =>
+                                                    handleChange(row.id, "receivedCases", e.target.value)
+                                                }
+                                                sx={{ width: 90 }}
+                                            />
+                                        </TableCell>
 
-                                {/* Issued */}
-                                <TableCell>
-                                    <TextField
-                                        size="small"
-                                        type="number"
-                                        value={row.issuedCases}
-                                        disabled={row.status === "LOCKED"}
-                                        onChange={(e) =>
-                                            handleChange(row.id, "issuedCases", e.target.value)
-                                        }
-                                        sx={{ width: 90 }}
-                                    />
-                                </TableCell>
+                                        <TableCell>
+                                            <TextField
+                                                size="small"
+                                                type="number"
+                                                value={row.receivedBottles}
+                                                disabled={row.status === "LOCKED"}
+                                                onChange={(e) =>
+                                                    handleChange(row.id, "receivedBottles", e.target.value)
+                                                }
+                                                sx={{ width: 90 }}
+                                            />
+                                        </TableCell>
 
-                                <TableCell>
-                                    <TextField
-                                        size="small"
-                                        type="number"
-                                        value={row.issuedBottles}
-                                        disabled={row.status === "LOCKED"}
-                                        onChange={(e) =>
-                                            handleChange(row.id, "issuedBottles", e.target.value)
-                                        }
-                                        sx={{ width: 90 }}
-                                    />
-                                </TableCell>
+                                        {/* Issued */}
+                                        <TableCell>
+                                            <TextField
+                                                size="small"
+                                                type="number"
+                                                value={row.issuedCases}
+                                                disabled={row.status === "LOCKED"}
+                                                onChange={(e) =>
+                                                    handleChange(row.id, "issuedCases", e.target.value)
+                                                }
+                                                sx={{ width: 90 }}
+                                            />
+                                        </TableCell>
 
-                                {/* Closing */}
-                                <TableCell>
-                                    {row.closingCases || 0}
-                                </TableCell>
+                                        <TableCell>
+                                            <TextField
+                                                size="small"
+                                                type="number"
+                                                value={row.issuedBottles}
+                                                disabled={row.status === "LOCKED"}
+                                                onChange={(e) =>
+                                                    handleChange(row.id, "issuedBottles", e.target.value)
+                                                }
+                                                sx={{ width: 90 }}
+                                            />
+                                        </TableCell>
 
-                                <TableCell>
+                                        {/* Closing */}
+                                        <TableCell>
+                                            {row.closingCases || 0}
+                                        </TableCell>
 
-                                    {row.closingBottles || 0}
+                                        <TableCell>
 
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                                            {row.closingBottles || 0}
+
+                                        </TableCell>
+                                    </TableRow>
+
+                                )
+                                )
+                        }
+
+
                     </TableBody>
                 </Table>
             </TableContainer>

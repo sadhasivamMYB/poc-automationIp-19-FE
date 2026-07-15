@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Box, Container, Paper, Typography } from "@mui/material";
 
 const AuthLayout = ({ children }: { children: ReactNode }) => {
@@ -22,8 +22,8 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
                     p: 4,
                 }}
             >
-                <Typography variant="h2" fontWeight="bold" gutterBottom>
-                    Inventory System
+                <Typography variant="h2" sx={{ fontWeight: "bold" }} gutterBottom>
+                    Stock Automation
                 </Typography>
                 <Typography variant="h5" sx={{ opacity: 0.8 }}>
                     daily stocks update

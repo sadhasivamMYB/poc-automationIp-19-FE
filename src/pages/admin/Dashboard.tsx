@@ -48,7 +48,7 @@ const StatCard = ({ title, value, icon, color }: any) => (
 
 const Dashboard = () => {
 
-    const [statsData, setStatsData] = useState<any>()
+    const [statsData, setStatsData] = useState<any>({ totalMasterItems: 0, totalWarehouses: 0, totalUsers: 0 })
 
     async function fetchDashboardStats() {
 

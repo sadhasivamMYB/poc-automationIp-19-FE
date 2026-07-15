@@ -10,6 +10,8 @@ import {
     TableRow,
     TextField,
     InputAdornment,
+    InputLabel,
+    Typography,
 } from "@mui/material";
 import { SearchOutlined } from "@mui/icons-material";
 import api from "../../services/api";
@@ -41,20 +43,8 @@ const CustomDateLog = () => {
                 setRows(response.data.data);
                 setHasData(true);
             } else {
-                // No data for this date, fetch master items to display names
                 setHasData(false);
-                const itemsResponse = await api.get("/master-item");
-                if (itemsResponse.data.success) {
-                    const masterItems = itemsResponse.data.data.map((item: any) => ({
-                        id: item.id,
-                        itemCode: item.itemCode,
-                        itemName: item.itemName,
-                        bottlePerCase: item.bottlePerCase,
-                    }));
-                    setRows(masterItems);
-                } else {
-                    setRows([]);
-                }
+                setRows([]);
             }
         } catch (error) {
             console.error("Failed to fetch custom date log", error);
@@ -78,16 +68,23 @@ const CustomDateLog = () => {
     return (
         <Box>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-                <TextField
-                    size="small"
-                    type="date"
-                    label="Select Date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    InputLabelProps={{ shrink: true }}
-                    inputProps={{ max: today }}
-                    sx={{ width: 200 }}
-                />
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                    <p style={{ fontSize: "12px", color: "red", marginBottom: "-2px" }}>
+                        Select a date to see logs *</p>
+                    <TextField
+                        size="small"
+                        type="date"
+
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        InputLabelProps={{ shrink: true }}
+                        inputProps={{ max: today }}
+                        sx={{ width: 200 }}
+                    />
+
+                </Box>
+
+
 
                 <TextField
                     size="small"
@@ -107,7 +104,13 @@ const CustomDateLog = () => {
                 />
             </Box>
 
-            {selectedDate && (
+            {selectedDate && !hasData && !loading && (
+                <Box sx={{ mt: 3, p: 2, bgcolor: "#fff3cd", color: "#856404", borderRadius: 1, border: "1px solid #ffeeba", textAlign: "center" }}>
+                    <Typography variant="body1" sx={{ fontWeight: 500 }}>No Stocks for the selected date.</Typography>
+                </Box>
+            )}
+
+            {selectedDate && hasData && (
                 <TableContainer
                     component={Paper}
                     elevation={3}
@@ -145,31 +148,16 @@ const CustomDateLog = () => {
                                     <TableCell>{row.itemName}</TableCell>
                                     <TableCell align="center">{row.bottlePerCase}</TableCell>
 
-                                    {!hasData ? (
-                                        <TableCell colSpan={8} align="center" sx={{ color: "text.secondary", fontStyle: "italic" }}>
-                                            No data on that date
-                                        </TableCell>
-                                    ) : (
-                                        <>
-                                            <TableCell align="center">{row.openingCases}</TableCell>
-                                            <TableCell align="center">{row.openingBottles}</TableCell>
-                                            <TableCell align="center">{row.receivedCases}</TableCell>
-                                            <TableCell align="center">{row.receivedBottles}</TableCell>
-                                            <TableCell align="center">{row.issuedCases}</TableCell>
-                                            <TableCell align="center">{row.issuedBottles}</TableCell>
-                                            <TableCell align="center">{row.closingCases || 0}</TableCell>
-                                            <TableCell align="center">{row.closingBottles || 0}</TableCell>
-                                        </>
-                                    )}
+                                    <TableCell align="center">{row.openingCases}</TableCell>
+                                    <TableCell align="center">{row.openingBottles}</TableCell>
+                                    <TableCell align="center">{row.receivedCases}</TableCell>
+                                    <TableCell align="center">{row.receivedBottles}</TableCell>
+                                    <TableCell align="center">{row.issuedCases}</TableCell>
+                                    <TableCell align="center">{row.issuedBottles}</TableCell>
+                                    <TableCell align="center">{row.closingCases || 0}</TableCell>
+                                    <TableCell align="center">{row.closingBottles || 0}</TableCell>
                                 </TableRow>
                             ))}
-                            {rows?.length === 0 && (
-                                <TableRow>
-                                    <TableCell colSpan={11} align="center">
-                                        No items found
-                                    </TableCell>
-                                </TableRow>
-                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>
