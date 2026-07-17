@@ -15,7 +15,7 @@ export function ConformationDialog({ open, handleClose, handleSubmit }) {
                 aria-labelledby="responsive-dialog-title"
             >
                 <DialogTitle id="responsive-dialog-title">
-                    {"Once Saved You can't EDIT again"}
+                    {new Date().toLocaleDateString()}'s Stock Log Save.
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
