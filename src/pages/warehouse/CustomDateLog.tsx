@@ -10,8 +10,8 @@ import {
     TableRow,
     TextField,
     InputAdornment,
-    InputLabel,
     Typography,
+    CircularProgress,
 } from "@mui/material";
 import { SearchOutlined } from "@mui/icons-material";
 import api from "../../services/api";
@@ -65,6 +65,11 @@ const CustomDateLog = () => {
         }
     }, [selectedDate, user?.warehouseId]);
 
+
+    const filterdData = rows.filter(row =>
+        row.itemCode?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        row.itemName?.toLowerCase().includes(searchQuery.toLowerCase()))
+
     return (
         <Box>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
@@ -104,9 +109,9 @@ const CustomDateLog = () => {
                 />
             </Box>
 
-            {selectedDate && !hasData && !loading && (
-                <Box sx={{ mt: 3, p: 2, bgcolor: "#fff3cd", color: "#856404", borderRadius: 1, border: "1px solid #ffeeba", textAlign: "center" }}>
-                    <Typography variant="body1" sx={{ fontWeight: 500 }}>No Stocks for the selected date.</Typography>
+            {!selectedDate && (
+                <Box sx={{ mt: 3, p: 4, bgcolor: "#f8fafc", color: "#475569", borderRadius: 2, border: "1px dashed #cbd5e1", textAlign: "center" }}>
+                    <Typography variant="body1" sx={{ fontWeight: 500 }}>Please select a date to view Stock.</Typography>
                 </Box>
             )}
 
@@ -139,25 +144,36 @@ const CustomDateLog = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows?.filter(row =>
-                                row.itemCode?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                row.itemName?.toLowerCase().includes(searchQuery.toLowerCase())
-                            ).map((row) => (
-                                <TableRow key={row.id} hover sx={{ "&:nth-of-type(even)": { bgcolor: "grey.50" } }}>
-                                    <TableCell>{row.itemCode}</TableCell>
-                                    <TableCell>{row.itemName}</TableCell>
-                                    <TableCell align="center">{row.bottlePerCase}</TableCell>
-
-                                    <TableCell align="center">{row.openingCases}</TableCell>
-                                    <TableCell align="center">{row.openingBottles}</TableCell>
-                                    <TableCell align="center">{row.receivedCases}</TableCell>
-                                    <TableCell align="center">{row.receivedBottles}</TableCell>
-                                    <TableCell align="center">{row.issuedCases}</TableCell>
-                                    <TableCell align="center">{row.issuedBottles}</TableCell>
-                                    <TableCell align="center">{row.closingCases || 0}</TableCell>
-                                    <TableCell align="center">{row.closingBottles || 0}</TableCell>
+                            {loading ? (
+                                <TableRow>
+                                    <TableCell colSpan={11} align="center" sx={{ py: 10 }}>
+                                        <CircularProgress size={40} thickness={4} />
+                                        <Typography color="text.secondary" sx={{ mt: 2, fontWeight: 500 }}>Fetching Data...</Typography>
+                                    </TableCell>
                                 </TableRow>
-                            ))}
+                            ) : filterdData?.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={11} align="center" sx={{ py: 18 }}>
+                                        <Typography color="text.secondary">No items to display.</Typography>
+                                    </TableCell>
+                                </TableRow>
+                            ) :
+                                filterdData?.map((row) => (
+                                    <TableRow key={row.id} hover sx={{ "&:nth-of-type(even)": { bgcolor: "grey.50" } }}>
+                                        <TableCell>{row.itemCode}</TableCell>
+                                        <TableCell>{row.itemName}</TableCell>
+                                        <TableCell align="center">{row.bottlePerCase}</TableCell>
+
+                                        <TableCell align="center">{row.openingCases}</TableCell>
+                                        <TableCell align="center">{row.openingBottles}</TableCell>
+                                        <TableCell align="center">{row.receivedCases}</TableCell>
+                                        <TableCell align="center">{row.receivedBottles}</TableCell>
+                                        <TableCell align="center">{row.issuedCases}</TableCell>
+                                        <TableCell align="center">{row.issuedBottles}</TableCell>
+                                        <TableCell align="center">{row.closingCases || 0}</TableCell>
+                                        <TableCell align="center">{row.closingBottles || 0}</TableCell>
+                                    </TableRow>
+                                ))}
                         </TableBody>
                     </Table>
                 </TableContainer>

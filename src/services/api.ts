@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "sonner";
 
 const api = axios.create({
-    baseURL: "http://localhost:5000/api",
+    baseURL: import.meta.env.VITE_BACKEND_URL
 });
 
 api.interceptors.request.use((config) => {
@@ -24,10 +24,10 @@ api.interceptors.response.use(
             // Optionally dispatch a custom event to tell AuthContext to logout
             window.dispatchEvent(new Event("auth-error"));
         }
-        
+
         const message = error.response?.data?.message || "An unexpected error occurred";
         toast.error(message);
-        
+
         return Promise.reject(error);
     }
 );

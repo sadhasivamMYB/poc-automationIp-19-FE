@@ -5,6 +5,7 @@ import api from "../../../services/api";
 import { useAuth } from "../../../context/AuthContext";
 import { Add, SearchOutlined, UploadOutlined, CheckCircleOutlined, ErrorOutlined } from "@mui/icons-material";
 import ExcelUploadButton from "../../../components/ExcelFileUploadButton";
+import useDebounce from "../../../hooks/useDebounce";
 
 export const calculateDifference = (stock: any): number => {
     const num = (val: any) => {
@@ -218,6 +219,7 @@ const Compare = () => {
         }));
     };
 
+    const debouncedSearch = useDebounce(searchQuery, 500)
     // Derived merged data
     const mergedData = useMemo(() => {
         const result: any[] = [];
@@ -310,14 +312,17 @@ const Compare = () => {
             });
         });
 
+
         // Search filter
         return result.filter(r =>
             !searchQuery ||
-            r.itemCode?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            r.itemName?.toLowerCase().includes(searchQuery.toLowerCase())
+            r.itemCode?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+            r.itemName?.toLowerCase().includes(debouncedSearch.toLowerCase())
         );
 
-    }, [selectedWarehouse, dailyStocks, excelData, savedData, edits, searchQuery, warehouses]);
+    }, [selectedWarehouse, dailyStocks, excelData, savedData, edits, debouncedSearch, warehouses]);
+
+
 
     const handleSaveInit = () => {
         if (!selectedDate) {
@@ -448,7 +453,7 @@ const Compare = () => {
                     open={openExcel}
                     handleClose={() => setOpenExcel(false)}
                     templateFileName={"compare-stock.xlsx"}
-                    templateHeaders={["warehouse_code", "itemCode", "itemName", "system_stock",]}
+                    templateHeaders={["warehouseCode", "itemCode", "itemName", "systemStock",]}
                     templateWidths={[{ wpx: 100 }, { wpx: 150 }, { wpx: 300 }, { wpx: 150 }]}
                     onLocalUpload={handleLocalUpload}
                 />
@@ -548,6 +553,7 @@ const Compare = () => {
                                 size="small"
                                 variant="contained"
                                 startIcon={<Add />}
+                                disabled={excelData.length === 0 || !selectedDate}
                                 onClick={handleSaveInit}
                             >
                                 Save All
@@ -609,7 +615,7 @@ const Compare = () => {
                                 ) : mergedData?.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={11} align="center" sx={{ py: 3 }}>
-                                            <Typography color="text.secondary">No items to display. Please select a Date, upload Excel, and select a Warehouse.</Typography>
+                                            <Typography color="text.secondary">No items to display.</Typography>
                                         </TableCell>
                                     </TableRow>
                                 ) : (
