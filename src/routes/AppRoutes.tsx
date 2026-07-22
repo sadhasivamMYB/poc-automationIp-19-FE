@@ -18,6 +18,7 @@ import WarehouseLayout from "../layouts/WarehouseLayout";
 import Compare from "../pages/admin/compare-stock/Compare";
 import UsersList from "../pages/admin/users/UsersList";
 import UserForm from "../pages/admin/users/UserForm";
+import Summary from "../pages/admin/summary/Summary";
 const AppRoutes = () => (
   <BrowserRouter>
     <Routes>
@@ -91,6 +92,15 @@ const AppRoutes = () => (
           />
 
           <Route
+            path="summary"
+            element={
+              <AdminLayout>
+                <Summary />
+              </AdminLayout>
+            }
+          />
+
+          <Route
             path="users"
             element={
               <AdminLayout>
@@ -128,6 +138,14 @@ const AppRoutes = () => (
           element={
             <WarehouseLayout>
               <CustomDateLog />
+            </WarehouseLayout>
+          }
+        />
+        <Route
+          path="/warehouse/summary"
+          element={
+            <WarehouseLayout>
+              <Summary />
             </WarehouseLayout>
           }
         />

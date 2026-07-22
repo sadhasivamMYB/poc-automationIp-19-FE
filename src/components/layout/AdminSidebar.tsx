@@ -1,4 +1,3 @@
-import React from "react";
 import {
     Drawer,
     List,
@@ -16,6 +15,7 @@ import CompareIcon from "@mui/icons-material/Compare";
 import PeopleIcon from "@mui/icons-material/People";
 
 import { Link, useLocation } from "react-router-dom";
+import { SummaryIcon } from "lucide-react";
 
 const drawerWidth = 260;
 
@@ -44,6 +44,11 @@ const menus = [
         title: "Compare",
         icon: <CompareIcon />,
         path: "/admin/compare",
+    },
+    {
+        title: "Summary",
+        icon: <SummaryIcon />,
+        path: "/admin/summary",
     },
 ];
 

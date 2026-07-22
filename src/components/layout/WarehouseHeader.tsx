@@ -10,7 +10,7 @@ import { useAuth } from "../../context/AuthContext";
 import { LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
-import { HomeMaxOutlined, HomeOutlined, WarehouseOutlined } from "@mui/icons-material";
+import { WarehouseOutlined } from "@mui/icons-material";
 
 const WarehouseHeader = () => {
 
