@@ -82,8 +82,10 @@ const CustomDateLog = () => {
 
                         value={selectedDate}
                         onChange={(e) => setSelectedDate(e.target.value)}
-                        InputLabelProps={{ shrink: true }}
-                        inputProps={{ max: today }}
+                        slotProps={{
+                            inputLabel: { shrink: true },
+                            htmlInput: { max: today }
+                        }}
                         sx={{ width: 200 }}
                     />
 

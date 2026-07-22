@@ -1,4 +1,3 @@
-import React from "react";
 import {
     Drawer,
     List,
@@ -15,6 +14,7 @@ import WarehouseIcon from "@mui/icons-material/Warehouse";
 
 
 import { Link, useLocation } from "react-router-dom";
+import { SummaryIcon } from "lucide-react";
 
 const drawerWidth = 260;
 
@@ -29,6 +29,11 @@ const menus = [
         title: "Custom Log",
         icon: <WarehouseIcon />,
         path: "/warehouse/custom-date-log",
+    },
+    {
+        title: "Summary",
+        icon: <SummaryIcon />,
+        path: "/warehouse/summary",
     },
 ];
 
