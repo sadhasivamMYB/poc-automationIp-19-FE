@@ -55,14 +55,14 @@ const DailyStock = () => {
     console.log(rows)
 
     const filterdData = useMemo(() => {
-        return rows?.filter(row =>
+        return rows?.filter((row: { itemCode: string, itemName: string }) =>
             row.itemCode?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
             row.itemName?.toLowerCase().includes(debouncedSearch.toLowerCase())
         )
     }, [rows, debouncedSearch])
 
 
-    const calculateClosing = (row) => {
+    const calculateClosing = (row: any) => {
         const bottlePerCase = row.bottlePerCase;
 
         const opening =
@@ -85,11 +85,11 @@ const DailyStock = () => {
         };
     };
 
-    const handleChange = (id, field, value) => {
+    const handleChange = (id: any, field: string, value: any) => {
         const number = Number(value) || 0;
 
-        setRows((prev) =>
-            prev?.map((row) => {
+        setRows((prev: any) =>
+            prev?.map((row: any) => {
 
                 if (row.id !== id) return row;
 
@@ -117,7 +117,7 @@ const DailyStock = () => {
     const handleConformationSubmit = async () => {
 
         const payload = {
-            stocks: rows?.map((row) => ({
+            stocks: rows?.map((row: any) => ({
                 id: row.id,
                 itemId: row?.itemId,
 
@@ -140,7 +140,7 @@ const DailyStock = () => {
             }
 
         }
-        catch (err) {
+        catch (err: any) {
             toast.error(err.message);
             setDialogOpen(false)
         }
@@ -263,7 +263,7 @@ const DailyStock = () => {
                                 </TableCell>
                             </TableRow>
                         )
-                            : filterdData?.map((row) => (
+                            : filterdData?.map((row: any) => (
                                 <TableRow
                                     hover
                                     key={row.id}

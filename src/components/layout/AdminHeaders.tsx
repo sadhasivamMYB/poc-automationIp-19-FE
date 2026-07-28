@@ -1,4 +1,3 @@
-import React from "react";
 import { AppBar, Toolbar, Typography, Button, Box, Avatar } from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
 import { LogOut } from "lucide-react";

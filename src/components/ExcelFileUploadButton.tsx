@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext";
 import {
     Dialog,
     DialogTitle,
@@ -163,7 +162,7 @@ export default function ExcelUploadButton({
 
             <DialogContent sx={{ mt: 2 }}>
 
-                <Typography variant="body2" color="text.secondary" mb={3}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                     Upload an Excel (.xls/.xlsx) file using the provided template.
                     The uploaded file must follow the required column structure.
                 </Typography>
@@ -204,7 +203,7 @@ export default function ExcelUploadButton({
                     <Typography
                         variant="body2"
                         color="text.secondary"
-                        mb={2}
+                        sx={{ mb: 2 }}
                     >
                         Supported formats: .xls, .xlsx
                     </Typography>
@@ -269,7 +268,7 @@ export default function ExcelUploadButton({
                     <InfoOutlined color="info" />
 
                     <Box>
-                        <Typography fontWeight={600}>
+                        <Typography sx={{ fontWeight: 600 }}>
                             Instructions
                         </Typography>
 

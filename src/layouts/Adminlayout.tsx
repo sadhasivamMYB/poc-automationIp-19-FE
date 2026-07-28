@@ -1,4 +1,4 @@
-import React, { type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Box, Toolbar } from "@mui/material";
 
 import AdminHeader from "../components/layout/AdminHeaders";

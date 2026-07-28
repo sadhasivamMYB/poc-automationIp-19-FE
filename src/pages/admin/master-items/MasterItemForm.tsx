@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -104,7 +104,7 @@ const MasterItemForm = () => {
             </Button>
 
             <Paper elevation={0} sx={{ p: 4, border: "1px solid", borderColor: "divider", borderRadius: 3 }}>
-                <Typography variant="h5" fontWeight="bold" gutterBottom>
+                <Typography variant="h5" sx={{ fontWeight: "bold" }} gutterBottom>
                     {isEditMode ? "Edit Master Item" : "Create Master Item"}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
@@ -147,7 +147,7 @@ const MasterItemForm = () => {
                             error={!!errors.bottlePerCase}
                             helperText={errors.bottlePerCase?.message}
                         />
-                        <Box sx={{ fullWidth: true, flexGrow: 1, pl: 2 }}>
+                        <Box sx={{ width: "100%", flexGrow: 1, pl: 2 }}>
                             <FormControlLabel
                                 control={
                                     <Switch

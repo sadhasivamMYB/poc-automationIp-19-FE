@@ -72,7 +72,7 @@ const AdminSidebar = () => {
         >
             <Toolbar />
             <Box sx={{ overflow: "auto", mt: 2, px: 2 }}>
-                <List spacing={1}>
+                <List >
                     {menus.map((menu) => {
                         const isActive = location.pathname === menu.path ||
                             (menu.path !== "/admin" && location.pathname.startsWith(menu.path));
@@ -103,9 +103,13 @@ const AdminSidebar = () => {
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={menu.title}
-                                    primaryTypographyProps={{
-                                        fontWeight: isActive ? 600 : 500,
-                                        fontSize: "0.95rem"
+                                    slotProps={{
+                                        primary: {
+                                            sx: {
+                                                fontWeight: isActive ? 600 : 500,
+                                                fontSize: "0.95rem"
+                                            }
+                                        }
                                     }}
                                 />
                             </ListItemButton>

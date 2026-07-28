@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -50,10 +50,9 @@ const UserForm = () => {
         control,
         reset,
         watch,
-        setValue,
         formState: { errors },
     } = useForm<UserFormValues>({
-        resolver: zodResolver(userSchema),
+        resolver: zodResolver(userSchema) as any,
         defaultValues: {
             name: "",
             email: "",
@@ -147,7 +146,7 @@ const UserForm = () => {
                     Back
                 </Button>
                 <Box>
-                    <Typography variant="h4" fontWeight="700" color="primary.main">
+                    <Typography variant="h4" sx={{ fontWeight: "bold" }} color="primary.main">
                         {isEditMode ? "Edit User" : "Add New User"}
                     </Typography>
                     <Typography variant="body1" color="text.secondary">
@@ -161,7 +160,6 @@ const UserForm = () => {
             <Paper
                 component="form"
                 onSubmit={handleSubmit(onSubmit)}
-                elevation={0}
                 sx={{
                     p: 4,
                     borderRadius: 3,

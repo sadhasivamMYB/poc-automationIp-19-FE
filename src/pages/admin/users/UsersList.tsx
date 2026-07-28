@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Box,
     Button,
@@ -69,7 +69,7 @@ const UsersList = () => {
                 }}
             >
                 <Box>
-                    <Typography variant="h4" fontWeight="700" color="primary.main">
+                    <Typography variant="h4" sx={{ fontWeight: 700 }} color="primary.main">
                         User Management
                     </Typography>
                     <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
