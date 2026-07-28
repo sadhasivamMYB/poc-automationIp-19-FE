@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Box,
     Button,
@@ -17,7 +17,6 @@ import {
 import { Edit, Add, UploadOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
-import { toast } from "sonner";
 import ExcelUploadButton from "../../../components/ExcelFileUploadButton";
 
 export interface MasterItem {
@@ -67,7 +66,7 @@ const MasterItemsList = () => {
             }
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
                 <Box>
-                    <Typography variant="h4" fontWeight="bold">
+                    <Typography variant="h4" sx={{ fontWeight: "bold" }}>
                         Master Items
                     </Typography>
                     <Typography variant="body2" color="text.secondary">

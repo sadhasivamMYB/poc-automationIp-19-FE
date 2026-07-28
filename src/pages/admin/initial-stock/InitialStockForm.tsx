@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -9,7 +9,6 @@ import {
     TextField,
     Typography,
     CircularProgress,
-    MenuItem,
     Autocomplete,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
@@ -36,7 +35,7 @@ const InitialStockForm = () => {
     const { id } = useParams();
     const isEditMode = id !== "new" && id !== undefined;
 
-    const [warehouselist, setWarehouseList] = useState()
+    const [warehouselist, setWarehouseList] = useState([])
 
 
     const fetchWarehouses = async () => {
@@ -48,7 +47,7 @@ const InitialStockForm = () => {
     }
 
     useEffect(() => {
-        console.log(fetchWarehouses())
+        fetchWarehouses()
     }, [])
 
     const [loadingData, setLoadingData] = useState(true);
@@ -62,7 +61,7 @@ const InitialStockForm = () => {
         control,
         formState: { errors },
     } = useForm<StockFormValues>({
-        resolver: zodResolver(stockSchema),
+        resolver: zodResolver(stockSchema) as any,
         defaultValues: {
             openingCases: 0,
             openingBottles: 0,
@@ -151,7 +150,7 @@ const InitialStockForm = () => {
             </Button>
 
             <Paper elevation={0} sx={{ p: 4, border: "1px solid", borderColor: "divider", borderRadius: 3 }}>
-                <Typography variant="h5" fontWeight="bold" gutterBottom>
+                <Typography variant="h5" sx={{ fontWeight: "bold" }} gutterBottom>
                     {isEditMode ? "Edit Initial Stock" : "Create Initial Stock"}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
@@ -166,13 +165,13 @@ const InitialStockForm = () => {
                             name="warehouseId"
                             control={control}
                             render={({ field: { onChange, value }, fieldState: { error } }) => {
-                                const selectedItem = warehouselist?.find((item) => item.id === (value ? Number(value) : null)) || null;
+                                const selectedItem = warehouselist?.find((item: any) => item.id === (value ? Number(value) : null)) || null;
                                 return (
                                     <Autocomplete
                                         options={warehouselist}
-                                        getOptionLabel={(option) => `${option.warehouseName}`}
+                                        getOptionLabel={(option: any) => `${option.warehouseName}`}
                                         value={selectedItem}
-                                        onChange={(_, newValue) => {
+                                        onChange={(_, newValue: any) => {
                                             onChange(newValue ? newValue.id : "");
                                         }}
                                         disabled={isEditMode}

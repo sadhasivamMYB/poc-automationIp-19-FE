@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -57,7 +57,7 @@ const Login = () => {
     return (
         <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
             <Box sx={{ mb: 4, textAlign: "center" }}>
-                <Typography variant="h4" fontWeight="bold" color="primary" gutterBottom>
+                <Typography variant="h4" sx={{ fontWeight: "bold" }} color="primary" gutterBottom>
                     Welcome Back
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
@@ -76,12 +76,14 @@ const Login = () => {
                 {...register("email")}
                 error={!!errors.email}
                 helperText={errors.email?.message}
-                inputprops={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <Email color="action" />
-                        </InputAdornment>
-                    ),
+                slotProps={{
+                    input: {
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <Email color="action" />
+                            </InputAdornment>
+                        ),
+                    }
                 }}
                 sx={{ mb: 2 }}
             />
@@ -97,23 +99,25 @@ const Login = () => {
                 {...register("password")}
                 error={!!errors.password}
                 helperText={errors.password?.message}
-                inputprops={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <Lock color="action" />
-                        </InputAdornment>
-                    ),
-                    endAdornment: (
-                        <InputAdornment position="end">
-                            <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={() => setShowPassword(!showPassword)}
-                                edge="end"
-                            >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                        </InputAdornment>
-                    )
+                slotProps={{
+                    input: {
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <Lock color="action" />
+                            </InputAdornment>
+                        ),
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    edge="end"
+                                >
+                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        )
+                    }
                 }}
                 sx={{ mb: 3 }}
             />

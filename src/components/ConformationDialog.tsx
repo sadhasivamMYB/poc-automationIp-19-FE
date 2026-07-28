@@ -2,7 +2,13 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
-export function ConformationDialog({ open, handleClose, handleSubmit }) {
+interface ConformationDialogProps {
+    open: boolean;
+    handleClose: () => void;
+    handleSubmit: () => void;
+}
+
+export function ConformationDialog({ open, handleClose, handleSubmit }: ConformationDialogProps) {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 

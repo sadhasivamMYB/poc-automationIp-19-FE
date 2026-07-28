@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Box,
     Typography,
@@ -57,7 +57,7 @@ const Summary = () => {
     const [warehouses, setWarehouses] = useState<any[]>([]);
     const [selectedWarehouse, setSelectedWarehouse] = useState<string>(user?.warehouseId || "");
 
-    const [masterItems, setMasterItems] = useState<MasterItem[]>([]);
+    const [, setMasterItems] = useState<MasterItem[]>([]);
     const [summaryData, setSummaryData] = useState<SummaryData[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -185,7 +185,7 @@ const Summary = () => {
                     </Select>
 
                     {
-                        user.role !== "ADMIN" ? <></>
+                        user?.role !== "ADMIN" ? <></>
                             :
                             <Select
                                 size="small"

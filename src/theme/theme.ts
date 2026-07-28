@@ -72,13 +72,18 @@ const theme = createTheme({
             boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
           },
         },
-        containedPrimary: {
-          background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
-          '&:hover': {
-            background: 'linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%)',
+      },
+      variants: [
+        {
+          props: { variant: 'contained', color: 'primary' },
+          style: {
+            background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%)',
+            },
           },
         },
-      },
+      ],
     },
     MuiPaper: {
       styleOverrides: {

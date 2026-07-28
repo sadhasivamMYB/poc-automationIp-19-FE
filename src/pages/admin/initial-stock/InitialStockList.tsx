@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Box,
     Button,
@@ -24,7 +24,7 @@ export interface InitialStock {
     itemId: number;
     openingCases: number;
     openingBottles: number;
-    warehouse?: { name: string };
+    warehouse?: { warehouseName: string };
     item?: { itemName: string; itemCode: string; bottlePerCase: number };
 }
 
@@ -73,7 +73,7 @@ const InitialStockList = () => {
             }
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
                 <Box>
-                    <Typography variant="h4" fontWeight="bold">
+                    <Typography variant="h4" sx={{ fontWeight: "bold" }}>
                         Initial Stock
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
