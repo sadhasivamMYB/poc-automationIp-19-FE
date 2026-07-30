@@ -21,7 +21,6 @@ import UserForm from "../pages/admin/users/UserForm";
 import Summary from "../pages/admin/summary/Summary";
 const RootRedirect = () => {
   const location = useLocation();
-  console.log("Warehouse/ warehouse/log", `/warehouse/log${location.search}${location.hash}`)
   return <Navigate to={`/warehouse/log${location.search}${location.hash}`} replace />;
 
 };

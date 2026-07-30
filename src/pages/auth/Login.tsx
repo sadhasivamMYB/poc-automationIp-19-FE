@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {
     Box,
     Button,
@@ -15,13 +14,7 @@ import { Visibility, VisibilityOff, Lock, Email } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 // import api from "../../services/api"; // removed unused api import
 import MicrosoftLogin from "./MicrosoftAuth";
-
-const loginSchema = z.object({
-    email: z.string().email("Please enter a valid email address"),
-    password: z.string().min(2, "Password must be at least 6 characters")
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
+import { loginSchema, type LoginPayload } from "../../zod";
 
 const Login = () => {
     const { loginWithEmail } = useAuth();
@@ -32,11 +25,11 @@ const Login = () => {
         register,
         handleSubmit,
         formState: { errors }
-    } = useForm<LoginFormValues>({
+    } = useForm<LoginPayload>({
         resolver: zodResolver(loginSchema)
     });
 
-    const onSubmit = async (data: LoginFormValues) => {
+    const onSubmit = async (data: LoginPayload) => {
         try {
             setIsLoading(true);
             await loginWithEmail(data);

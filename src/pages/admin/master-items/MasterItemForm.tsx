@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {
     Box,
     Button,
@@ -16,15 +15,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
 import api from "../../../services/api";
 import { toast } from "sonner";
-
-const itemSchema = z.object({
-    itemCode: z.string().min(1, "Item Code is required"),
-    itemName: z.string().min(1, "Item Name is required"),
-    bottlePerCase: z.coerce.number().min(1, "Must be at least 1"),
-    isActive: z.boolean().default(true),
-});
-
-type ItemFormValues = z.infer<typeof itemSchema>;
+import { masterItemFormSchema, type MasterItemFormValues } from "../../../zod";
 
 const MasterItemForm = () => {
     const navigate = useNavigate();
@@ -39,8 +30,8 @@ const MasterItemForm = () => {
         handleSubmit,
         reset,
         formState: { errors },
-    } = useForm<ItemFormValues>({
-        resolver: zodResolver(itemSchema) as any,
+    } = useForm<MasterItemFormValues>({
+        resolver: zodResolver(masterItemFormSchema) as any,
         defaultValues: {
             isActive: true,
         }
@@ -67,7 +58,7 @@ const MasterItemForm = () => {
         }
     }, [id, isEditMode, reset, navigate]);
 
-    const onSubmit = async (data: ItemFormValues) => {
+    const onSubmit = async (data: MasterItemFormValues) => {
         setSubmitting(true);
         try {
             if (isEditMode) {

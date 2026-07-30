@@ -55,7 +55,7 @@ const Summary = () => {
     const [selectedYear, setSelectedYear] = useState<number>(currentYear);
     const [selectedMonths, setSelectedMonths] = useState<number[]>([]); // [start, end] or [single]
     const [warehouses, setWarehouses] = useState<any[]>([]);
-    const [selectedWarehouse, setSelectedWarehouse] = useState<string>(user?.warehouseId || "");
+    const [selectedWarehouse, setSelectedWarehouse] = useState<string>(user?.warehouseId ? String(user.warehouseId) : "");
 
     const [, setMasterItems] = useState<MasterItem[]>([]);
     const [summaryData, setSummaryData] = useState<SummaryData[]>([]);

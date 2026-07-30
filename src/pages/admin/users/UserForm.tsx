@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {
     Box,
     Button,
@@ -16,24 +15,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
 import api from "../../../services/api";
 import { toast } from "sonner";
-
-const userSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    email: z.string().email("Invalid email address"),
-    password: z.string().optional(),
-    role: z.enum(["ADMIN", "USER"]),
-    warehouseId: z.coerce.number().optional().nullable(),
-}).superRefine((data, ctx) => {
-    if (data.role === 'USER' && !data.warehouseId) {
-        ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Warehouse is required for USER role",
-            path: ["warehouseId"]
-        });
-    }
-});
-
-type UserFormValues = z.infer<typeof userSchema>;
+import { userFormSchema, type UserFormValues } from "../../../zod";
 
 const UserForm = () => {
     const navigate = useNavigate();
@@ -52,9 +34,9 @@ const UserForm = () => {
         watch,
         formState: { errors },
     } = useForm<UserFormValues>({
-        resolver: zodResolver(userSchema) as any,
+        resolver: zodResolver(userFormSchema) as any,
         defaultValues: {
-            name: "",
+            fullName: "",
             email: "",
             password: "",
             role: "USER",
@@ -80,7 +62,7 @@ const UserForm = () => {
                     if (userRes.data.success) {
                         const user = userRes.data.data;
                         reset({
-                            name: user.name,
+                            fullName: user.fullName,
                             email: user.email,
                             role: user.role,
                             warehouseId: user.warehouseId || null,
@@ -171,11 +153,11 @@ const UserForm = () => {
                 }}
             >
                 <TextField
-                    label="Name"
+                    label="Full Name"
                     fullWidth
-                    {...register("name")}
-                    error={!!errors.name}
-                    helperText={errors.name?.message}
+                    {...register("fullName")}
+                    error={!!errors.fullName}
+                    helperText={errors.fullName?.message}
                 />
 
                 <TextField
@@ -196,6 +178,7 @@ const UserForm = () => {
                     helperText={errors.password?.message || (isEditMode ? "Leave blank to keep current password" : "")}
                     placeholder={isEditMode ? "********" : ""}
                 />
+
 
                 <Controller
                     name="role"

@@ -6,7 +6,11 @@ import theme from "./theme/theme";
 import "./index.css";
 import { AuthProvider } from "./context/AuthContext";
 import AppRoutes from "./routes/AppRoutes";
+import { validateEnvironment } from "./zod";
 import { msalInstance } from "./pages/auth/msal";
+
+// Validate environment variables on startup
+validateEnvironment();
 
 msalInstance.initialize().then(() => {
   ReactDOM.createRoot(

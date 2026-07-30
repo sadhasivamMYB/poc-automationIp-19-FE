@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {
     Box,
     Button,
@@ -16,19 +15,7 @@ import { ArrowBack } from "@mui/icons-material";
 import api from "../../../services/api";
 import { toast } from "sonner";
 import type { MasterItem } from "../master-items/MasterItemsList";
-
-// Fetch warehouses from the backend
-
-
-
-const stockSchema = z.object({
-    warehouseId: z.coerce.number().min(1, "Warehouse is required"),
-    itemId: z.coerce.number().min(1, "Item is required"),
-    openingCases: z.coerce.number().min(0, "Cannot be negative"),
-    openingBottles: z.coerce.number().min(0, "Cannot be negative"),
-});
-
-type StockFormValues = z.infer<typeof stockSchema>;
+import { initialStockFormSchema, type StockFormValues } from "../../../zod";
 
 const InitialStockForm = () => {
     const navigate = useNavigate();
@@ -61,7 +48,7 @@ const InitialStockForm = () => {
         control,
         formState: { errors },
     } = useForm<StockFormValues>({
-        resolver: zodResolver(stockSchema) as any,
+        resolver: zodResolver(initialStockFormSchema) as any,
         defaultValues: {
             openingCases: 0,
             openingBottles: 0,
