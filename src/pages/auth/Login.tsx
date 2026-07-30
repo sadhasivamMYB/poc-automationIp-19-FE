@@ -13,7 +13,8 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff, Lock, Email } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
-import api from "../../services/api";
+// import api from "../../services/api"; // removed unused api import
+import MicrosoftLogin from "./MicrosoftAuth";
 
 const loginSchema = z.object({
     email: z.string().email("Please enter a valid email address"),
@@ -23,7 +24,7 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Login = () => {
-    const { login } = useAuth();
+    const { loginWithEmail } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -38,12 +39,7 @@ const Login = () => {
     const onSubmit = async (data: LoginFormValues) => {
         try {
             setIsLoading(true);
-            const response = await api.post("/auth/login", data);
-
-            // Expected backend response: { token: string, user: User }
-            const { token, user } = response.data;
-
-            login(token, user);
+            await loginWithEmail(data);
 
             // Routing will automatically redirect based on user role from PublicRoute
         } catch (error) {
@@ -55,84 +51,95 @@ const Login = () => {
     };
 
     return (
-        <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-            <Box sx={{ mb: 4, textAlign: "center" }}>
-                <Typography variant="h4" sx={{ fontWeight: "bold" }} color="primary" gutterBottom>
-                    Welcome Back
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                    Please sign in to your account
-                </Typography>
+        <>
+
+
+
+            <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+                <Box sx={{ mb: 4, textAlign: "center" }}>
+                    <Typography variant="h4" sx={{ fontWeight: "bold" }} color="primary" gutterBottom>
+                        Welcome Back
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                        Please sign in to your account
+                    </Typography>
+                </Box>
+
+                <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    autoComplete="email"
+                    autoFocus
+                    {...register("email")}
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                    slotProps={{
+                        input: {
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Email color="action" />
+                                </InputAdornment>
+                            ),
+                        }
+                    }}
+                    sx={{ mb: 2 }}
+                />
+
+                <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    label="Password"
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    autoComplete="current-password"
+                    {...register("password")}
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    slotProps={{
+                        input: {
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Lock color="action" />
+                                </InputAdornment>
+                            ),
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        edge="end"
+                                    >
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            )
+                        }
+                    }}
+                    sx={{ mb: 3 }}
+                />
+
+                <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    size="large"
+                    disabled={isLoading}
+                    sx={{ mt: 2, mb: 2, py: 1.5, fontSize: "1.1rem" }}
+                >
+                    {isLoading ? <CircularProgress size={26} color="inherit" /> : "Sign In"}
+                </Button>
+
+            </Box>
+            <Box>
+                <MicrosoftLogin />
             </Box>
 
-            <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                autoComplete="email"
-                autoFocus
-                {...register("email")}
-                error={!!errors.email}
-                helperText={errors.email?.message}
-                slotProps={{
-                    input: {
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <Email color="action" />
-                            </InputAdornment>
-                        ),
-                    }
-                }}
-                sx={{ mb: 2 }}
-            />
 
-            <TextField
-                margin="normal"
-                required
-                fullWidth
-                label="Password"
-                type={showPassword ? "text" : "password"}
-                id="password"
-                autoComplete="current-password"
-                {...register("password")}
-                error={!!errors.password}
-                helperText={errors.password?.message}
-                slotProps={{
-                    input: {
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <Lock color="action" />
-                            </InputAdornment>
-                        ),
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    edge="end"
-                                >
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                            </InputAdornment>
-                        )
-                    }
-                }}
-                sx={{ mb: 3 }}
-            />
-
-            <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                disabled={isLoading}
-                sx={{ mt: 2, mb: 2, py: 1.5, fontSize: "1.1rem" }}
-            >
-                {isLoading ? <CircularProgress size={26} color="inherit" /> : "Sign In"}
-            </Button>
-        </Box>
+        </>
     );
 };
 
