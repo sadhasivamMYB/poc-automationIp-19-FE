@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 import Login from "../pages/auth/Login";
 import Dashboard from "../pages/admin/Dashboard";
@@ -19,10 +19,17 @@ import Compare from "../pages/admin/compare-stock/Compare";
 import UsersList from "../pages/admin/users/UsersList";
 import UserForm from "../pages/admin/users/UserForm";
 import Summary from "../pages/admin/summary/Summary";
+const RootRedirect = () => {
+  const location = useLocation();
+  console.log("Warehouse/ warehouse/log", `/warehouse/log${location.search}${location.hash}`)
+  return <Navigate to={`/warehouse/log${location.search}${location.hash}`} replace />;
+
+};
+
 const AppRoutes = () => (
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<RootRedirect />} />
 
       <Route element={<PublicRoute />}>
         <Route
