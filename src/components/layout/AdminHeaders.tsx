@@ -41,13 +41,13 @@ const AdminHeader = () => {
 
                 <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                        <Avatar sx={{ width: 32, height: 32, bgcolor: "primary.light" }}>
-                            {user?.name?.charAt(0) || "A"}
+                        <Avatar sx={{ bgcolor: "primary.light" }}>
+                            {user?.fullName?.charAt(0) || "A"}
                         </Avatar>
                         <Box sx={{ display: { xs: "none", sm: "block" } }}>
-                            <Typography variant="subtitle2" sx={{ lineHeight: 1.2, fontWeight: "bold" }}>
-                                {user?.name || "Admin User"}
-                            </Typography>
+                            <Typography variant="body1" sx={{ fontWeight: 500, color: '#333' }}>
+                            {user?.fullName || "Admin User"}
+                        </Typography>
                             <Typography variant="caption" color="text.secondary">
                                 {user?.role || "ADMIN"}
                             </Typography>

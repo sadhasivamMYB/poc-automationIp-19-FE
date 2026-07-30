@@ -18,14 +18,7 @@ import { Edit, Add } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
 
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
-    warehouseId?: number;
-    warehouse?: { warehouseName: string };
-}
+import { type User } from "../../../zod";
 
 const UsersList = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -136,7 +129,7 @@ const UsersList = () => {
                                         sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                                     >
                                         <TableCell>{user.id}</TableCell>
-                                        <TableCell sx={{ fontWeight: 500 }}>{user.name}</TableCell>
+                                        <TableCell sx={{ fontWeight: 500 }}>{user.fullName}</TableCell>
                                         <TableCell>{user.email}</TableCell>
                                         <TableCell>
                                             <Chip

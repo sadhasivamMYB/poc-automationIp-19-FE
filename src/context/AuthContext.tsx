@@ -1,15 +1,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import api from "../services/api";
 import { msalInstance } from "../pages/auth/msal";
-
-export interface User {
-    id: string;
-    name: string;
-    email: string;
-    role: "ADMIN" | "USER";
-    warehouseId?: string;
-    warehouseName?: string;
-}
+import { parseApiResponse } from "../utils/zod-validation";
+import { authResponseSchema, type User } from "../zod";
 
 interface AuthContextType {
     user: User | null;
@@ -50,15 +43,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     // No pending redirect, just continue
                     console.log("No pending MSAL redirect");
                 }
-                console.log("After INIT Micrsoft HandleREDIRECT 1", response, " response")
                 if (response && response.idToken) {
                     const apiResponse = await api.post("/auth/microsoft", {
                         token: response.idToken,
                     });
-                    const { token: appToken, user: appUser } = apiResponse.data;
 
-                    if (appToken && appUser) {
-                        internalLogin(appToken, appUser);
+                    const parsed = parseApiResponse(authResponseSchema, apiResponse.data);
+
+                    if (parsed.data?.token && parsed.data?.user) {
+                        internalLogin(parsed.data.token, parsed.data.user);
                         if (isMounted) setLoading(false);
                         return; // Successfully logged in, exit early
                     }
@@ -88,21 +81,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const loginWithEmail = async (data: any) => {
         const response = await api.post("/auth/login", data);
-        const { token: newToken, user: newUser } = response.data;
-        internalLogin(newToken, newUser);
+        const parsed = parseApiResponse(authResponseSchema, response.data);
+        
+        if (parsed.data?.token && parsed.data?.user) {
+            internalLogin(parsed.data.token, parsed.data.user);
+        }
     };
 
     const loginWithMicrosoft = async () => {
-        console.log("loginWithMicrosoft ⚡⚡⚡⚡⚡  1")
         await msalInstance.loginRedirect({
             scopes: ["User.Read"],
         });
-        console.log("loginWithMicrosoft ⚡⚡⚡⚡⚡  2")
     };
 
     const logout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        localStorage.clear()
         setUser(null);
         setToken(null);
     };
