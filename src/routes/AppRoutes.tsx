@@ -19,6 +19,8 @@ import Compare from "../pages/admin/compare-stock/Compare";
 import UsersList from "../pages/admin/users/UsersList";
 import UserForm from "../pages/admin/users/UserForm";
 import Summary from "../pages/admin/summary/Summary";
+import { ActivateAccount } from "../pages/ActivateAccount/ActivateAccount";
+
 const RootRedirect = () => {
   const location = useLocation();
   return <Navigate to={`/warehouse/log${location.search}${location.hash}`} replace />;
@@ -36,6 +38,14 @@ const AppRoutes = () => (
           element={
             <AuthLayout>
               <Login />
+            </AuthLayout>
+          }
+        />
+        <Route
+          path="/activate-account"
+          element={
+            <AuthLayout>
+              <ActivateAccount />
             </AuthLayout>
           }
         />

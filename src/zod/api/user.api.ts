@@ -8,6 +8,7 @@ export const userSchema = z.object({
     email: z.string().email("Invalid email address"),
     password: z.string().optional(),
     role: userRoleSchema,
+    status: z.string().optional(),
     warehouseId: z.coerce.number().optional().nullable(),
     createdAt: z.string().optional(),
     warehouseName: z.string().optional().nullable(),

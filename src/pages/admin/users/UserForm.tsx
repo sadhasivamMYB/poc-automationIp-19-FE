@@ -10,6 +10,7 @@ import {
     CircularProgress,
     MenuItem,
     Autocomplete,
+    Backdrop,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
@@ -25,6 +26,7 @@ const UserForm = () => {
     const [warehouses, setWarehouses] = useState<any[]>([]);
     const [loadingData, setLoadingData] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+    const [mailLoading, setMailLoading] = useState<boolean>(false);
 
     const {
         register,
@@ -92,12 +94,20 @@ const UserForm = () => {
             }
 
             if (isEditMode) {
+                setMailLoading(true);
                 await api.put(`/users/${id}`, payload);
                 toast.success("User updated successfully");
             } else {
-                await api.post("/users", payload);
-                toast.success("User created successfully");
+                setMailLoading(true);
+                await api.post("/invitations/invite", {
+                    email: payload.email,
+                    fullName: payload.fullName,
+                    role: payload.role,
+                    warehouseId: payload.warehouseId || undefined,
+                });
+                toast.success("User created and invitation email sent successfully!");
             }
+            setMailLoading(false);
             navigate("/admin/users");
         } catch (error: any) {
             console.error("Submission error", error);
@@ -117,7 +127,18 @@ const UserForm = () => {
     }
 
     return (
-        <Box sx={{ maxWidth: 800, mx: "auto" }}>
+        <Box sx={{ maxWidth: 800, mx: "auto", position: "relative" }}>
+
+            <Backdrop
+                sx={{
+                    color: "#fff",
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                    bgcolor: "rgba(0, 0, 0, 0.7)",
+                }}
+                open={mailLoading}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box sx={{ display: "flex", alignItems: "center", mb: 4, gap: 2 }}>
                 <Button
                     startIcon={<ArrowBack />}
@@ -169,15 +190,17 @@ const UserForm = () => {
                     helperText={errors.email?.message}
                 />
 
-                <TextField
-                    label="Password"
-                    fullWidth
-                    type="password"
-                    {...register("password")}
-                    error={!!errors.password}
-                    helperText={errors.password?.message || (isEditMode ? "Leave blank to keep current password" : "")}
-                    placeholder={isEditMode ? "********" : ""}
-                />
+                {isEditMode && (
+                    <TextField
+                        label="Password"
+                        fullWidth
+                        type="password"
+                        {...register("password")}
+                        error={!!errors.password}
+                        helperText={errors.password?.message || "Leave blank to keep current password"}
+                        placeholder="********"
+                    />
+                )}
 
 
                 <Controller
