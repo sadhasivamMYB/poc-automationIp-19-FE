@@ -158,7 +158,7 @@ const UsersList = () => {
                                             <TableCell>
                                                 {user.warehouse?.warehouseName || (
                                                     <Typography variant="body2" color="text.secondary" sx={{ fontStyle: "italic" }}>
-                                                        Unassigned
+                                                        -
                                                     </Typography>
                                                 )}
                                             </TableCell>
