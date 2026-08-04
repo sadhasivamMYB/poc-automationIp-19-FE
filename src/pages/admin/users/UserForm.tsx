@@ -267,7 +267,7 @@ const UserForm = () => {
                         disabled={submitting}
                         sx={{ borderRadius: 2, px: 4 }}
                     >
-                        {submitting ? <CircularProgress size={24} color="inherit" /> : "Save User"}
+                        {submitting ? <CircularProgress size={24} color="inherit" /> : "Invite User"}
                     </Button>
                 </Box>
             </Paper>

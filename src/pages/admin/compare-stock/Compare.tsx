@@ -1,5 +1,5 @@
 import { Box, Button, InputAdornment, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogActions, List, ListItem, ListItemIcon, ListItemText, CircularProgress, Chip } from "@mui/material"
-import { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import api from "../../../services/api";
 import { useAuth } from "../../../context/AuthContext";
@@ -22,7 +22,215 @@ export const calculateDifference = (stock: any): number => {
     );
 };
 
+const sanitize = (val: any) => {
+    if (val === null || val === undefined) return '';
+    if (Number.isNaN(Number(val))) return '';
+    return val;
+};
+
+// --- PHASE 1, 2, 6, 7: CompareRow Component ---
+interface CompareRowProps {
+    stock: any;
+    onEditChange: (warehouseCode: string, itemCode: string, field: string, value: string) => void;
+}
+
+const noSpinnersSx = {
+    width: 90,
+    "& input[type=number]": {
+        MozAppearance: "textfield",
+    },
+    "& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button": {
+        WebkitAppearance: "none",
+        margin: 0,
+    },
+};
+
+const CompareRow = React.memo(({ stock, onEditChange }: CompareRowProps) => {
+    // Local state for fast typing
+    const [manual, setManual] = useState(stock.manual);
+    const [pendingSupply, setPendingSupply] = useState(stock.pendingSupply);
+    const [salesReturn, setSalesReturn] = useState(stock.salesReturn);
+    const [blocked, setBlocked] = useState(stock.blocked);
+    const [stoPending, setStoPending] = useState(stock.stoPending);
+    const [grnPending, setGrnPending] = useState(stock.grnPending);
+    const [damages, setDamages] = useState(stock.damages);
+
+    // Sync with parent props if they change externally (e.g. date change)
+    useEffect(() => { setManual(stock.manual); }, [stock.manual]);
+    useEffect(() => { setPendingSupply(stock.pendingSupply); }, [stock.pendingSupply]);
+    useEffect(() => { setSalesReturn(stock.salesReturn); }, [stock.salesReturn]);
+    useEffect(() => { setBlocked(stock.blocked); }, [stock.blocked]);
+    useEffect(() => { setStoPending(stock.stoPending); }, [stock.stoPending]);
+    useEffect(() => { setGrnPending(stock.grnPending); }, [stock.grnPending]);
+    useEffect(() => { setDamages(stock.damages); }, [stock.damages]);
+
+    // Difference recalculation using local state
+    const currentDiff = useMemo(() => calculateDifference({
+        physicalStock: stock.physicalStock,
+        systemStock: stock.systemStock,
+        manual,
+        pendingSupply,
+        blocked,
+        damages,
+        stoPending,
+        grnPending,
+        salesReturn
+    }), [stock.physicalStock, stock.systemStock, manual, pendingSupply, blocked, damages, stoPending, grnPending, salesReturn]);
+
+    // Handlers
+    const handleBlur = (field: string, localVal: any) => {
+        if (localVal !== stock[field]) {
+            onEditChange(stock.warehouseCode, stock.itemCode, field, localVal);
+        }
+    };
+
+    return (
+        <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+            <TableCell>{stock.itemCode}</TableCell>
+            <TableCell>{stock.itemName}</TableCell>
+            <TableCell align="center">{Number(stock.physicalStock || 0).toFixed(4)}</TableCell>
+            <TableCell align="center">{stock.systemStock}</TableCell>
+            <TableCell align="center">
+                <TextField
+                    size="small"
+                    type="number"
+                    value={manual !== undefined ? manual : ""}
+                    onChange={(e) => setManual(e.target.value)}
+                    onBlur={(e) => handleBlur('manual', e.target.value)}
+                    sx={noSpinnersSx}
+                    onWheel={(e) => (e.target as HTMLElement).blur()}
+                />
+            </TableCell>
+            <TableCell align="center">
+                <TextField
+                    size="small"
+                    type="number"
+                    value={pendingSupply !== undefined ? pendingSupply : ""}
+                    onChange={(e) => setPendingSupply(e.target.value)}
+                    onBlur={(e) => handleBlur('pendingSupply', e.target.value)}
+                    sx={noSpinnersSx}
+                    onWheel={(e) => (e.target as HTMLElement).blur()}
+                />
+            </TableCell>
+            <TableCell align="right">
+                <TextField
+                    size="small"
+                    type="number"
+                    value={salesReturn !== undefined ? salesReturn : ""}
+                    onChange={(e) => setSalesReturn(e.target.value)}
+                    onBlur={(e) => handleBlur('salesReturn', e.target.value)}
+                    sx={noSpinnersSx}
+                    onWheel={(e) => (e.target as HTMLElement).blur()}
+                />
+            </TableCell>
+            <TableCell align="right">
+                <TextField
+                    size="small"
+                    type="number"
+                    value={blocked !== undefined ? blocked : ""}
+                    onChange={(e) => setBlocked(e.target.value)}
+                    onBlur={(e) => handleBlur('blocked', e.target.value)}
+                    sx={noSpinnersSx}
+                    onWheel={(e) => (e.target as HTMLElement).blur()}
+                />
+            </TableCell>
+            <TableCell align="right">
+                <TextField
+                    size="small"
+                    type="number"
+                    value={stoPending !== undefined ? stoPending : ""}
+                    onChange={(e) => setStoPending(e.target.value)}
+                    onBlur={(e) => handleBlur('stoPending', e.target.value)}
+                    sx={noSpinnersSx}
+                    onWheel={(e) => (e.target as HTMLElement).blur()}
+                />
+            </TableCell>
+            <TableCell align="right">
+                <TextField
+                    size="small"
+                    type="number"
+                    value={grnPending !== undefined ? grnPending : ""}
+                    onChange={(e) => setGrnPending(e.target.value)}
+                    onBlur={(e) => handleBlur('grnPending', e.target.value)}
+                    sx={noSpinnersSx}
+                    onWheel={(e) => (e.target as HTMLElement).blur()}
+                />
+            </TableCell>
+            <TableCell align="right">
+                <TextField
+                    size="small"
+                    type="number"
+                    value={damages !== undefined ? damages : ""}
+                    onChange={(e) => setDamages(e.target.value)}
+                    onBlur={(e) => handleBlur('damages', e.target.value)}
+                    sx={noSpinnersSx}
+                    onWheel={(e) => (e.target as HTMLElement).blur()}
+                />
+            </TableCell>
+            <TableCell align="right">{currentDiff}</TableCell>
+        </TableRow>
+    );
+});
+
+// --- PHASE 8: Shared Helper Logic ---
+const getWarehouseBaseData = (
+    whCode: string,
+    whId: string,
+    dailyStocks: any[],
+    excelData: any[],
+    savedData: any[],
+    masterItems: any[]
+) => {
+    const dsForWh = dailyStocks.filter(ds => ds.warehouseId === whId || ds.warehouse?.id === whId || ds.warehouseCode === whCode);
+    const sdForWh = savedData.filter(sd => sd.warehouseId === whId || sd.warehouseCode === whCode);
+    const exForWh = excelData.filter(ex => ex.warehouse_code === whCode);
+
+    const exMapByCode = new Map();
+    const exMapByName = new Map();
+    exForWh.forEach(ex => {
+        if (ex.itemCode) exMapByCode.set(ex.itemCode, ex);
+        if (ex.itemName) exMapByName.set(ex.itemName, ex);
+    });
+
+    const sdMapByCode = new Map();
+    sdForWh.forEach(sd => {
+        if (sd.itemCode) sdMapByCode.set(sd.itemCode, sd);
+    });
+
+    const baseMap = new Map();
+    masterItems.forEach(mi => {
+        baseMap.set(mi.itemCode, {
+            itemCode: mi.itemCode,
+            itemName: mi.itemName,
+            physicalStock: 0,
+            isSaved: false,
+            savedItem: null
+        });
+    });
+
+    if (sdForWh.length > 0) {
+        sdForWh.forEach(sd => {
+            baseMap.set(sd.itemCode, { ...sd, isSaved: true, savedItem: sd });
+        });
+    } else {
+        dsForWh.forEach(ds => {
+            const physicalStock = Number(((ds.openingCases || 0) * (ds.bottlePerCase || 1) + (ds.openingBottles || 0)) / (ds.bottlePerCase || 1));
+            baseMap.set(ds.itemCode, {
+                ...baseMap.get(ds.itemCode),
+                itemCode: ds.itemCode,
+                itemName: ds.itemName,
+                physicalStock,
+                isSaved: false,
+                savedItem: null
+            });
+        });
+    }
+
+    return { baseMap, exMapByCode, exMapByName, sdMapByCode };
+};
+
 const Compare = () => {
+    // console.log("Rendering ----------------------------")
     const { user } = useAuth();
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedDate, setSelectedDate] = useState("");
@@ -33,8 +241,7 @@ const Compare = () => {
     const [selectedWarehouse, setSelectedWarehouse] = useState<string>("");
     const [masterItems, setMasterItems] = useState<any[]>([]);
 
-    // Data states
-    const [dailyStocks, setDailyStocks] = useState<any[]>([]); // Array of all daily stocks for date
+    const [dailyStocks, setDailyStocks] = useState<any[]>([]); 
     const [excelData, setExcelData] = useState<any[]>(() => {
         try {
             const saved = localStorage.getItem('compareExcelData');
@@ -46,9 +253,8 @@ const Compare = () => {
     const [excelFileName, setExcelFileName] = useState<string>(() => {
         return localStorage.getItem('compareExcelFileName') || "";
     });
-    const [savedData, setSavedData] = useState<any[]>([]); // Data from /compare-stock API if exists
+    const [savedData, setSavedData] = useState<any[]>([]); 
 
-    // Edits
     const [edits, setEdits] = useState<Record<string, any>>({});
     const [visitedWarehouses, setVisitedWarehouses] = useState<Set<string>>(new Set());
     const [openSummary, setOpenSummary] = useState(false);
@@ -66,8 +272,8 @@ const Compare = () => {
         } catch (error) {
             console.error("Failed to fetch warehouses", error);
         }
-
     }
+
     const fetchMasterItems = async () => {
         try {
             const response = await api.get("/master-item");
@@ -80,13 +286,9 @@ const Compare = () => {
     }
 
     useEffect(() => {
-
         fetchWarehouses();
         fetchMasterItems();
-
     }, [])
-
-    console.log(warehouses)
 
     useEffect(() => {
         if (selectedWarehouse) {
@@ -98,7 +300,6 @@ const Compare = () => {
         }
     }, [selectedWarehouse]);
 
-    // Default to user's warehouse if available
     useEffect(() => {
         if (!selectedWarehouse && warehouses?.length > 0) {
             setSelectedWarehouse(user?.warehouseId || warehouses[0]?.id);
@@ -112,20 +313,16 @@ const Compare = () => {
         setSavedData([]);
 
         try {
-            // // Check if saved data exists
-            // let hasSavedData = false;
             try {
                 const compareRes = await api.get("/compare", { params: { date } });
                 if (compareRes.data?.success && compareRes.data?.data?.length > 0) {
                     setSavedData(compareRes.data.data);
-                    // hasSavedData = true;
                     toast.success("Loaded saved comparison data.");
                 }
             } catch (e) {
                 console.log("No saved comparison data for this date.");
             }
 
-            // Fetch daily stock for ALL warehouses individually to provide warehouseId
             const dsPromises = warehouses?.map(wh =>
                 api.get("/daily-stock/history", { params: { date, warehouseId: wh.id } })
                     .then(res => ({ res, warehouseId: wh.id, warehouseCode: wh.warehouseCode || wh.name }))
@@ -162,8 +359,6 @@ const Compare = () => {
             setEdits({});
         }
     }, [selectedDate]);
-
-    console.log(excelData)
 
     const handleLocalUpload = (parsedData: any[], fileName?: string) => {
         let normalizedData: any[] = [];
@@ -208,7 +403,7 @@ const Compare = () => {
         toast.success("Cleared Excel data successfully.");
     };
 
-    const handleEditChange = (warehouseCode: string, itemCode: string, field: string, value: string) => {
+    const handleEditChange = useCallback((warehouseCode: string, itemCode: string, field: string, value: string) => {
         const key = `${warehouseCode}_${itemCode}`;
         setEdits(prev => ({
             ...prev,
@@ -217,112 +412,72 @@ const Compare = () => {
                 [field]: value
             }
         }));
-    };
+    }, []);
 
     const debouncedSearch = useDebounce(searchQuery, 500)
-    // Derived merged data
-    const mergedData = useMemo(() => {
-        const result: any[] = [];
 
+    // Derived base data purely from source arrays (ignores edits)
+    const baseMergedData = useMemo(() => {
+        const result: any[] = [];
         if (!selectedWarehouse) return result;
 
-        // Find warehouse code (assuming warehouses have warehouseCode or name)
         const whObj = warehouses?.find(w => w.id === selectedWarehouse || w.warehouseCode === selectedWarehouse || w.name === selectedWarehouse);
         const whCode = whObj?.warehouseCode || whObj?.name || whObj?.id;
 
-
-        // Filter daily stocks for this warehouse
-        const dsForWh = dailyStocks.filter(ds =>
-            ds.warehouseId === selectedWarehouse ||
-            ds.warehouse?.id === selectedWarehouse ||
-            ds.warehouseCode === whCode
+        const { baseMap, exMapByCode, exMapByName } = getWarehouseBaseData(
+            whCode,
+            selectedWarehouse,
+            dailyStocks,
+            excelData,
+            savedData,
+            masterItems
         );
-
-        // Filter excel for this warehouse
-        const exForWh = excelData.filter(e => e.warehouse_code === whCode);
-
-        const exMapByCode = new Map();
-        const exMapByName = new Map();
-        exForWh.forEach(ex => {
-            if (ex.itemCode) exMapByCode.set(ex.itemCode, ex);
-            if (ex.itemName) exMapByName.set(ex.itemName, ex);
-        });
-
-
-        // Merge rules:
-        // 1. Both exist -> display both
-        // 2. Daily only -> System stock = 0
-        // 3. Excel only -> Ignore
-
-        // Saved data overrides? If we have saved data, we just display that for the warehouse.
-        const sdForWh = savedData.filter(sd => sd.warehouseId === selectedWarehouse || sd.warehouseCode === whCode);
-
-        const baseMap = new Map();
-        masterItems.forEach(mi => {
-            baseMap.set(mi.itemCode, {
-                itemCode: mi.itemCode,
-                itemName: mi.itemName,
-                physicalStock: 0,
-                isSaved: false
-            });
-        });
-
-        if (sdForWh.length > 0) {
-            sdForWh.forEach(sd => {
-                baseMap.set(sd.itemCode, { ...sd, isSaved: true });
-            });
-        } else {
-            dsForWh.forEach(ds => {
-                const physicalStock = Number(((ds.openingCases || 0) * (ds.bottlePerCase || 1) + (ds.openingBottles || 0)) / (ds.bottlePerCase || 1));
-                baseMap.set(ds.itemCode, {
-                    ...baseMap.get(ds.itemCode),
-                    itemCode: ds.itemCode,
-                    itemName: ds.itemName,
-                    physicalStock,
-                    isSaved: false
-                });
-            });
-        }
 
         baseMap.forEach((baseItem, itemCode) => {
             const ex = exMapByCode.get(itemCode) || exMapByName.get(baseItem.itemName);
-
             const systemStock = ex ? Number(ex.system_stock || 0) : (baseItem.isSaved ? Number(baseItem.systemStock || 0) : 0);
-
-            const key = `${whCode}_${itemCode}`;
-            const edit = edits[key] || {};
-
-            const sanitize = (val: any) => {
-                if (val === null || val === undefined) return '';
-                if (Number.isNaN(Number(val))) return '';
-                return val;
-            };
 
             result.push({
                 ...baseItem,
                 warehouseCode: whCode,
                 systemStock,
-                manual: edit.manual !== undefined ? edit.manual : (baseItem.isSaved ? sanitize(baseItem.manual) : ''),
-                salesReturn: edit.salesReturn !== undefined ? edit.salesReturn : (baseItem.isSaved ? sanitize(baseItem.salesReturn) : ''),
-                blocked: edit.blocked !== undefined ? edit.blocked : (baseItem.isSaved ? sanitize(baseItem.blocked) : ''),
-                stoPending: edit.stoPending !== undefined ? edit.stoPending : (baseItem.isSaved ? sanitize(baseItem.stoPending) : ''),
-                grnPending: edit.grnPending !== undefined ? edit.grnPending : (baseItem.isSaved ? sanitize(baseItem.grnPending) : ''),
-                damages: edit.damages !== undefined ? edit.damages : (baseItem.isSaved ? sanitize(baseItem.damages) : ''),
-                pendingSupply: edit.pendingSupply !== undefined ? edit.pendingSupply : (baseItem.isSaved ? sanitize(baseItem.pendingSupply) : ''),
+                // store original saved values for fallback if no edits
+                manualOrig: baseItem.isSaved ? sanitize(baseItem.savedItem.manual) : '',
+                salesReturnOrig: baseItem.isSaved ? sanitize(baseItem.savedItem.salesReturn) : '',
+                blockedOrig: baseItem.isSaved ? sanitize(baseItem.savedItem.blocked) : '',
+                stoPendingOrig: baseItem.isSaved ? sanitize(baseItem.savedItem.stoPending) : '',
+                grnPendingOrig: baseItem.isSaved ? sanitize(baseItem.savedItem.grnPending) : '',
+                damagesOrig: baseItem.isSaved ? sanitize(baseItem.savedItem.damages) : '',
+                pendingSupplyOrig: baseItem.isSaved ? sanitize(baseItem.savedItem.pendingSupply) : '',
             });
         });
 
+        return result;
+    }, [selectedWarehouse, dailyStocks, excelData, savedData, warehouses, masterItems]);
 
-        // Search filter
-        return result.filter(r =>
-            !searchQuery ||
+    // Apply edits and search to final merged data
+    const finalRenderedData = useMemo(() => {
+        const filtered = baseMergedData.filter(r =>
+            !debouncedSearch ||
             r.itemCode?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
             r.itemName?.toLowerCase().includes(debouncedSearch.toLowerCase())
         );
 
-    }, [selectedWarehouse, dailyStocks, excelData, savedData, edits, debouncedSearch, warehouses]);
-
-
+        return filtered.map(item => {
+            const key = `${item.warehouseCode}_${item.itemCode}`;
+            const edit = edits[key] || {};
+            return {
+                ...item,
+                manual: edit.manual !== undefined ? edit.manual : item.manualOrig,
+                salesReturn: edit.salesReturn !== undefined ? edit.salesReturn : item.salesReturnOrig,
+                blocked: edit.blocked !== undefined ? edit.blocked : item.blockedOrig,
+                stoPending: edit.stoPending !== undefined ? edit.stoPending : item.stoPendingOrig,
+                grnPending: edit.grnPending !== undefined ? edit.grnPending : item.grnPendingOrig,
+                damages: edit.damages !== undefined ? edit.damages : item.damagesOrig,
+                pendingSupply: edit.pendingSupply !== undefined ? edit.pendingSupply : item.pendingSupplyOrig,
+            };
+        });
+    }, [baseMergedData, edits, debouncedSearch]);
 
     const handleSaveInit = () => {
         if (!selectedDate) {
@@ -332,59 +487,22 @@ const Compare = () => {
         setOpenSummary(true);
     };
 
-
-    // function stockDiff(stock: any) {
-    //     console.log(Number((stock.physicalStock + stock.manual) - (stock.systemStock + Number(stock.pendingSupply || 0) + stock.blocked - stock.damages) + stock.stoPending - stock.grnPending - stock.salesReturn))
-
-    // }
-
-
-
     const handleConfirmSave = async () => {
         setLoading(true);
         try {
-            // Build payload for ALL warehouses
             const payload: any[] = [];
 
-            // Iterate over all warehouses to build full payload
             warehouses?.forEach(wh => {
                 const whCode = wh.warehouseCode || wh.name || wh.id;
 
-                // If saved data exists for this warehouse, maybe we just include it as is or update it
-                const dsForWh = dailyStocks.filter(ds => ds.warehouseId === wh.id || ds.warehouse?.id === wh.id || ds.warehouseCode === whCode);
-                const sdForWh = savedData.filter(sd => sd.warehouseId === wh.id || sd.warehouseCode === whCode);
-                const exForWh = excelData.filter(ex => ex.warehouse_code === whCode);
-
-                const exMapByCode = new Map();
-                const exMapByName = new Map();
-                exForWh.forEach(ex => {
-                    if (ex.itemCode) exMapByCode.set(ex.itemCode, ex);
-                    if (ex.itemName) exMapByName.set(ex.itemName, ex);
-                });
-
-                const sdMapByCode = new Map();
-                sdForWh.forEach(sd => {
-                    if (sd.itemCode) sdMapByCode.set(sd.itemCode, sd);
-                });
-
-                const baseMap = new Map();
-                masterItems.forEach(mi => {
-                    baseMap.set(mi.itemCode, {
-                        itemCode: mi.itemCode,
-                        itemName: mi.itemName,
-                        physicalStock: 0
-                    });
-                });
-
-                dsForWh.forEach(ds => {
-                    const physicalStock = Number(((ds.openingCases || 0) * (ds.bottlePerCase || 1) + (ds.openingBottles || 0)) / (ds.bottlePerCase || 1));
-                    baseMap.set(ds.itemCode, {
-                        ...baseMap.get(ds.itemCode),
-                        itemCode: ds.itemCode,
-                        itemName: ds.itemName,
-                        physicalStock
-                    });
-                });
+                const { baseMap, exMapByCode, exMapByName, sdMapByCode } = getWarehouseBaseData(
+                    whCode,
+                    wh.id,
+                    dailyStocks,
+                    excelData,
+                    savedData,
+                    masterItems
+                );
 
                 baseMap.forEach((baseItem, itemCode) => {
                     const ex = exMapByCode.get(itemCode) || exMapByName.get(baseItem.itemName);
@@ -418,7 +536,6 @@ const Compare = () => {
                         difference: calculateDifference(payloadItem)
                     });
                 });
-
             });
 
             const res = await api.post("/compare/bulk", {
@@ -432,8 +549,7 @@ const Compare = () => {
                 localStorage.removeItem("compareExcelData");
                 localStorage.removeItem("compareExcelFileName");
                 setExcelFileName("");
-
-                fetchData(selectedDate); // reload saved data
+                fetchData(selectedDate);
             } else {
                 toast.error(res.data?.message || "Failed to save.");
             }
@@ -444,7 +560,6 @@ const Compare = () => {
             setLoading(false);
         }
     };
-
 
     return (
         <Box sx={{ p: 1, height: "100vh" }}>
@@ -459,7 +574,6 @@ const Compare = () => {
                 />
             )}
 
-            {/* Validation Summary Dialog */}
             <Dialog open={openSummary} onClose={() => setOpenSummary(false)} maxWidth="sm" fullWidth>
                 <DialogTitle>Validation Summary</DialogTitle>
                 <DialogContent>
@@ -468,11 +582,8 @@ const Compare = () => {
                         {warehouses?.map(wh => {
                             const whCode = wh.warehouseCode || wh.name || wh.id;
                             const isVisited = visitedWarehouses.has(wh.id);
-                            // Check if Excel has data for this warehouse
                             const hasExcel = excelData.some(ex => ex.warehouse_code === whCode);
-                            // Check if Daily Stock has data for this warehouse
                             const hasDS = dailyStocks.some(ds => ds.warehouseId === wh.id || ds.warehouse?.id === wh.id || ds.warehouseCode === whCode);
-
                             const isComplete = isVisited && hasExcel && hasDS;
 
                             return (
@@ -500,7 +611,6 @@ const Compare = () => {
             </Dialog>
 
             <Paper sx={{ p: 2, height: "100%", display: 'flex', flexDirection: 'column' }}>
-                {/* header */}
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
                     <Box sx={{ display: "flex", gap: 1 }}>
                         <TextField
@@ -509,12 +619,8 @@ const Compare = () => {
                             value={selectedDate}
                             onChange={(e) => setSelectedDate(e.target.value)}
                             slotProps={{
-                                htmlInput: {
-                                    max: maxDate,
-                                },
-                                inputLabel: {
-                                    shrink: true
-                                }
+                                htmlInput: { max: maxDate },
+                                inputLabel: { shrink: true }
                             }}
                             sx={{ width: 200 }}
                         />
@@ -553,7 +659,7 @@ const Compare = () => {
                                 size="small"
                                 variant="contained"
                                 startIcon={<Add />}
-                                disabled={excelData.length === 0 || !selectedDate}
+                                disabled={(excelData.length === 0 && savedData.length === 0) || !selectedDate}
                                 onClick={handleSaveInit}
                             >
                                 Save All
@@ -572,7 +678,6 @@ const Compare = () => {
                     </Box>
                 </Box>
 
-                {/* Location Selection */}
                 <Box>
                     <Select onChange={(e) => setSelectedWarehouse(e.target.value)} value={selectedWarehouse} displayEmpty>
                         <MenuItem value={""} disabled>Select Warehouse</MenuItem>
@@ -607,91 +712,24 @@ const Compare = () => {
                             <TableBody>
                                 {loading ? (
                                     <TableRow>
-                                        <TableCell colSpan={11} align="center" sx={{ py: 10 }}>
+                                        <TableCell colSpan={12} align="center" sx={{ py: 10 }}>
                                             <CircularProgress size={40} thickness={4} />
                                             <Typography color="text.secondary" sx={{ mt: 2, fontWeight: 500 }}>Fetching Data...</Typography>
                                         </TableCell>
                                     </TableRow>
-                                ) : mergedData?.length === 0 ? (
+                                ) : finalRenderedData?.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={11} align="center" sx={{ py: 3 }}>
+                                        <TableCell colSpan={12} align="center" sx={{ py: 3 }}>
                                             <Typography color="text.secondary">No items to display.</Typography>
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    mergedData?.map((stock) => (
-                                        <TableRow key={stock.itemCode} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                                            <TableCell>{stock?.itemCode}</TableCell>
-                                            <TableCell>{stock?.itemName}</TableCell>
-                                            <TableCell align="center">{Number(stock?.physicalStock || 0).toFixed(4)}</TableCell>
-                                            <TableCell align="center">{stock?.systemStock}</TableCell>
-
-
-                                            <TableCell align="center">
-                                                <TextField
-                                                    size="small"
-                                                    type="number"
-                                                    value={stock.manual !== undefined ? stock.manual : ""}
-                                                    onChange={(e) => handleEditChange(stock.warehouseCode, stock.itemCode, 'manual', e.target.value)}
-                                                    sx={{ width: 90 }}
-                                                />
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <TextField
-                                                    size="small"
-                                                    type="number"
-                                                    value={stock.pendingSupply !== undefined ? stock.pendingSupply : ""}
-                                                    onChange={(e) => handleEditChange(stock.warehouseCode, stock.itemCode, 'pendingSupply', e.target.value)}
-                                                    sx={{ width: 90 }}
-                                                />
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <TextField
-                                                    size="small"
-                                                    type="number"
-                                                    value={stock.salesReturn !== undefined ? stock.salesReturn : ""}
-                                                    onChange={(e) => handleEditChange(stock.warehouseCode, stock.itemCode, 'salesReturn', e.target.value)}
-                                                    sx={{ width: 90 }}
-                                                />
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <TextField
-                                                    size="small"
-                                                    type="number"
-                                                    value={stock.blocked !== undefined ? stock.blocked : ""}
-                                                    onChange={(e) => handleEditChange(stock.warehouseCode, stock.itemCode, 'blocked', e.target.value)}
-                                                    sx={{ width: 90 }}
-                                                />
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <TextField
-                                                    size="small"
-                                                    type="number"
-                                                    value={stock.stoPending !== undefined ? stock.stoPending : ""}
-                                                    onChange={(e) => handleEditChange(stock.warehouseCode, stock.itemCode, 'stoPending', e.target.value)}
-                                                    sx={{ width: 90 }}
-                                                />
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <TextField
-                                                    size="small"
-                                                    type="number"
-                                                    value={stock.grnPending !== undefined ? stock.grnPending : ""}
-                                                    onChange={(e) => handleEditChange(stock.warehouseCode, stock.itemCode, 'grnPending', e.target.value)}
-                                                    sx={{ width: 90 }}
-                                                />
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <TextField
-                                                    size="small"
-                                                    type="number"
-                                                    value={stock.damages !== undefined ? stock.damages : ""}
-                                                    onChange={(e) => handleEditChange(stock.warehouseCode, stock.itemCode, 'damages', e.target.value)}
-                                                    sx={{ width: 90 }}
-                                                />
-                                            </TableCell>
-                                            <TableCell align="right" >{calculateDifference(stock)}</TableCell>
-                                        </TableRow>
+                                    finalRenderedData?.map((stock) => (
+                                        <CompareRow
+                                            key={stock.itemCode}
+                                            stock={stock}
+                                            onEditChange={handleEditChange}
+                                        />
                                     ))
                                 )}
                             </TableBody>
@@ -703,4 +741,4 @@ const Compare = () => {
     )
 }
 
-export default Compare
+export default React.memo(Compare);
