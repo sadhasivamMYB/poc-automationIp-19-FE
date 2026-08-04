@@ -8,7 +8,9 @@ interface AuthContextType {
     user: User | null;
     token: string | null;
     loading: boolean;
-    loginWithEmail: (data: any) => Promise<void>;
+    loginWithEmail: (data: any) => Promise<any>;
+    verifyOtp: (email: string, otp: string) => Promise<void>;
+    resendOtp: (email: string) => Promise<void>;
     loginWithMicrosoft: () => Promise<void>;
     logout: () => void;
     fileName: string | null;
@@ -81,11 +83,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const loginWithEmail = async (data: any) => {
         const response = await api.post("/auth/login", data);
-        const parsed = parseApiResponse(authResponseSchema, response.data);
-        
+        const responseData = response.data;
+
+        // If OTP is required, return the response for the Login page to handle
+        if (responseData?.data?.otpRequired) {
+            return responseData.data;
+        }
+
+        // Otherwise, complete login directly
+        const parsed = parseApiResponse(authResponseSchema, responseData);
         if (parsed.data?.token && parsed.data?.user) {
             internalLogin(parsed.data.token, parsed.data.user);
         }
+        return responseData.data;
+    };
+
+    const verifyOtp = async (email: string, otp: string) => {
+        const response = await api.post("/auth/verify/otp", { email, otp });
+        const parsed = parseApiResponse(authResponseSchema, response.data);
+
+        if (parsed.data?.token && parsed.data?.user) {
+            internalLogin(parsed.data.token, parsed.data.user);
+        }
+    };
+
+    const resendOtp = async (email: string) => {
+        await api.post("/auth/resend/otp", { email });
     };
 
     const loginWithMicrosoft = async () => {
@@ -101,7 +124,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, loading, loginWithEmail, loginWithMicrosoft, logout, fileName, setFileName }}>
+        <AuthContext.Provider value={{ user, token, loading, loginWithEmail, verifyOtp, resendOtp, loginWithMicrosoft, logout, fileName, setFileName }}>
             {children}
         </AuthContext.Provider>
     );
