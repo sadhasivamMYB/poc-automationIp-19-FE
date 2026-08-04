@@ -20,7 +20,7 @@ import {
     InfoOutlined,
 } from "@mui/icons-material";
 
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import api from "../services/api";
 import { toast } from "sonner";
 
@@ -50,23 +50,29 @@ export default function ExcelUploadButton({
     const [excelError, setExcelError] = useState("");
 
     // Download template (empty file for users)
-    const handleDownloadTemplate = () => {
+    const handleDownloadTemplate = async () => {
         // Create a new workbook
-        const workbook = XLSX.utils.book_new();
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Template");
 
         // Create empty worksheet with required headers
-        const worksheet = XLSX.utils.aoa_to_sheet([
-            templateHeaders,
-        ]);
+        worksheet.addRow(templateHeaders);
 
         // Set column widths for better readability
-        worksheet["!cols"] = templateWidths;
-
-        // Add worksheet to workbook
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Template");
+        // ExcelJS width is roughly in characters. 1 character is ~7.5 pixels.
+        templateWidths.forEach((widthObj, index) => {
+            worksheet.getColumn(index + 1).width = widthObj.wpx / 7.5;
+        });
 
         // Generate and download the Excel file
-        XLSX.writeFile(workbook, templateFileName);
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = templateFileName;
+        a.click();
+        URL.revokeObjectURL(url);
     };
 
     const handleUpload = async () => {
@@ -78,10 +84,41 @@ export default function ExcelUploadButton({
         if (onLocalUpload) {
             try {
                 const data = await selectedFile.arrayBuffer();
-                const workbook = XLSX.read(data, { type: "array" });
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                const workbook = new ExcelJS.Workbook();
+                await workbook.xlsx.load(data);
+                const worksheet = workbook.worksheets[0];
+                
+                const jsonData: any[] = [];
+                let headers: string[] = [];
+                let headerRowFound = false;
+
+                worksheet.eachRow((row) => {
+                    if (!headerRowFound) {
+                        row.eachCell((cell, colNumber) => {
+                            headers[colNumber] = cell.value ? String(cell.value) : `__EMPTY_${colNumber}`;
+                        });
+                        headerRowFound = true;
+                    } else {
+                        const rowData: any = {};
+                        let hasData = false;
+                        row.eachCell((cell, colNumber) => {
+                            if (headers[colNumber] !== undefined) {
+                                let val = cell.value;
+                                if (val && typeof val === 'object' && 'result' in val) {
+                                    val = (val as any).result;
+                                } else if (val && typeof val === 'object' && 'richText' in val) {
+                                    val = (val as any).richText.map((rt: any) => rt.text).join('');
+                                }
+                                rowData[headers[colNumber]] = val;
+                                hasData = true;
+                            }
+                        });
+                        if (hasData) {
+                            jsonData.push(rowData);
+                        }
+                    }
+                });
+
                 onLocalUpload(jsonData, selectedFile.name);
                 handleClose();
             } catch (error) {
