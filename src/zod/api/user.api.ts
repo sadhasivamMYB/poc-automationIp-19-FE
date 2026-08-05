@@ -22,6 +22,7 @@ export const userFormSchema = z.object({
     email: z.string().email("Invalid email address"),
     password: z.string().optional(),
     role: userRoleSchema,
+    status: z.enum(["ACTIVE", "INACTIVE", "INVITED"]).optional(),
     warehouseId: z.coerce.number().optional().nullable(),
 }).superRefine((data, ctx) => {
     if (data.role === 'USER' && !data.warehouseId) {

@@ -43,6 +43,7 @@ const UserForm = () => {
             password: "",
             role: "USER",
             warehouseId: null,
+            status: "ACTIVE",
         },
     });
 
@@ -68,6 +69,7 @@ const UserForm = () => {
                             email: user.email,
                             role: user.role,
                             warehouseId: user.warehouseId || null,
+                            status: user.status,
                         });
                     }
                 }
@@ -203,6 +205,27 @@ const UserForm = () => {
                 )}
 
 
+                {isEditMode && (
+                    <Controller
+                        name="status"
+                        control={control}
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                select
+                                label="Status"
+                                fullWidth
+                                error={!!errors.status}
+                                helperText={errors.status?.message}
+                            >
+                                <MenuItem value="ACTIVE">Active</MenuItem>
+                                <MenuItem value="INACTIVE">Inactive</MenuItem>
+                                <MenuItem value="INVITED" disabled>Invited</MenuItem>
+                            </TextField>
+                        )}
+                    />
+                )}
+
                 <Controller
                     name="role"
                     control={control}
@@ -267,7 +290,7 @@ const UserForm = () => {
                         disabled={submitting}
                         sx={{ borderRadius: 2, px: 4 }}
                     >
-                        {submitting ? <CircularProgress size={24} color="inherit" /> : "Invite User"}
+                        {submitting ? <CircularProgress size={24} color="inherit" /> : isEditMode ? "Update User" : "Invite User"}
                     </Button>
                 </Box>
             </Paper>
