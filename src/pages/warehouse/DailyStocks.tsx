@@ -23,6 +23,17 @@ import useDebounce from "../../hooks/useDebounce";
 
 
 
+const noSpinnersSx = {
+    width: 90,
+    "& input[type=number]": {
+        MozAppearance: "textfield",
+    },
+    "& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button": {
+        WebkitAppearance: "none",
+        margin: 0,
+    },
+};
+
 const DailyStock = () => {
 
     const [rows, setRows] = useState<any>();
@@ -300,7 +311,8 @@ const DailyStock = () => {
                                             onChange={(e) =>
                                                 handleChange(row.id, "receivedCases", e.target.value)
                                             }
-                                            sx={{ width: 90 }}
+                                            sx={noSpinnersSx}
+                                            onWheel={(e) => (e.target as HTMLElement).blur()}
                                         />
                                     </TableCell>
 
@@ -313,7 +325,8 @@ const DailyStock = () => {
                                             onChange={(e) =>
                                                 handleChange(row.id, "receivedBottles", e.target.value)
                                             }
-                                            sx={{ width: 90 }}
+                                            sx={noSpinnersSx}
+                                            onWheel={(e) => (e.target as HTMLElement).blur()}
                                         />
                                     </TableCell>
 
@@ -327,7 +340,8 @@ const DailyStock = () => {
                                             onChange={(e) =>
                                                 handleChange(row.id, "issuedCases", e.target.value)
                                             }
-                                            sx={{ width: 90 }}
+                                            sx={noSpinnersSx}
+                                            onWheel={(e) => (e.target as HTMLElement).blur()}
                                         />
                                     </TableCell>
 
@@ -340,7 +354,8 @@ const DailyStock = () => {
                                             onChange={(e) =>
                                                 handleChange(row.id, "issuedBottles", e.target.value)
                                             }
-                                            sx={{ width: 90 }}
+                                            sx={noSpinnersSx}
+                                            onWheel={(e) => (e.target as HTMLElement).blur()}
                                         />
                                     </TableCell>
 

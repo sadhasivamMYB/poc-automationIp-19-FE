@@ -70,9 +70,9 @@ const Dashboard = () => {
                 <Typography variant="h4" gutterBottom>
                     Dashboard Overview
                 </Typography>
-                <Typography variant="body1" color="text.secondary">
+                {/* <Typography variant="body1" color="text.secondary">
                     Welcome to the Admin Portal. Here's what's happening today.
-                </Typography>
+                </Typography> */}
             </Box>
 
             <Grid container spacing={3}>

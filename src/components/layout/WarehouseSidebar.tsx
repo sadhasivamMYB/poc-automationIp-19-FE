@@ -55,9 +55,27 @@ const WarehouseSidebar = () => {
                 },
             }}
         >
-            <Typography sx={{ p: 3, fontWeight: "bold", color: "black" }}>
-                Stock Automation
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, py: 3, px: 1 }}>
+                <Box
+                    sx={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: 1,
+                        background: "linear-gradient(135deg, #2563eb 0%, #1e40af 100%)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "white",
+                        fontWeight: "bold",
+                        padding: "1px"
+                    }}
+                >
+                    SM
+                </Box>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Stock Management System
+                </Typography>
+            </Box>
 
             <Toolbar />
             <Box sx={{ overflow: "auto", mt: 2 }}>

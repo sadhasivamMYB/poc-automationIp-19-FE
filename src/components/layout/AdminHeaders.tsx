@@ -30,12 +30,13 @@ const AdminHeader = () => {
                             justifyContent: "center",
                             color: "white",
                             fontWeight: "bold",
+                            padding: "1px"
                         }}
                     >
-                        IS
+                        SM
                     </Box>
                     <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        Stock Automation
+                        Stock Management System
                     </Typography>
                 </Box>
 
@@ -46,8 +47,8 @@ const AdminHeader = () => {
                         </Avatar>
                         <Box sx={{ display: { xs: "none", sm: "block" } }}>
                             <Typography variant="body1" sx={{ fontWeight: 500, color: '#333' }}>
-                            {user?.fullName || "Admin User"}
-                        </Typography>
+                                {user?.fullName || "Admin User"}
+                            </Typography>
                             <Typography variant="caption" color="text.secondary">
                                 {user?.role || "ADMIN"}
                             </Typography>

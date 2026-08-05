@@ -23,11 +23,11 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
                 }}
             >
                 <Typography variant="h2" sx={{ fontWeight: "bold" }} gutterBottom>
-                    Stock Automation
+                    Stock Management System
                 </Typography>
-                <Typography variant="h5" sx={{ opacity: 0.8 }}>
+                {/* <Typography variant="h5" sx={{ opacity: 0.8 }}>
                     daily stocks update
-                </Typography>
+                </Typography> */}
             </Box>
 
             <Box
