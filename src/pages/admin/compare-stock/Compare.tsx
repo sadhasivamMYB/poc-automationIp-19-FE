@@ -241,7 +241,7 @@ const Compare = () => {
     const [selectedWarehouse, setSelectedWarehouse] = useState<string>("");
     const [masterItems, setMasterItems] = useState<any[]>([]);
 
-    const [dailyStocks, setDailyStocks] = useState<any[]>([]); 
+    const [dailyStocks, setDailyStocks] = useState<any[]>([]);
     const [excelData, setExcelData] = useState<any[]>(() => {
         try {
             const saved = localStorage.getItem('compareExcelData');
@@ -253,7 +253,7 @@ const Compare = () => {
     const [excelFileName, setExcelFileName] = useState<string>(() => {
         return localStorage.getItem('compareExcelFileName') || "";
     });
-    const [savedData, setSavedData] = useState<any[]>([]); 
+    const [savedData, setSavedData] = useState<any[]>([]);
 
     const [edits, setEdits] = useState<Record<string, any>>({});
     const [visitedWarehouses, setVisitedWarehouses] = useState<Set<string>>(new Set());
@@ -658,6 +658,7 @@ const Compare = () => {
                             <Button
                                 size="small"
                                 variant="contained"
+                                sx={{ cursor: "pointer", fontSize: "12px" }}
                                 startIcon={<Add />}
                                 disabled={(excelData.length === 0 && savedData.length === 0) || !selectedDate}
                                 onClick={handleSaveInit}
@@ -667,7 +668,7 @@ const Compare = () => {
 
                             <Button
                                 size="small"
-                                sx={{ cursor: "pointer", background: "#479759ff", color: "white" }}
+                                sx={{ cursor: "pointer", background: "#479759ff", color: "white", fontSize: "12px" }}
                                 variant="outlined"
                                 startIcon={<UploadOutlined />}
                                 onClick={() => setOpenExcel(true)}

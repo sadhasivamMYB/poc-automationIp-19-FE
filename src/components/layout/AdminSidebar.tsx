@@ -50,6 +50,11 @@ const menus = [
         icon: <SummaryIcon />,
         path: "/admin/summary",
     },
+    {
+        title: "Distribution Plan",
+        icon: <InventoryIcon />, // Using InventoryIcon as a placeholder
+        path: "/admin/distribution-plan",
+    },
 ];
 
 const AdminSidebar = () => {

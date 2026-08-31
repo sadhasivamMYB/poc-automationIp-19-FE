@@ -91,6 +91,7 @@ const UsersList = () => {
                             borderRadius: 2,
                             px: 3,
                             py: 1,
+                            fontSize: "12px",
                             textTransform: "none",
                             fontWeight: 600,
                             boxShadow: "0 4px 12px rgba(25, 118, 210, 0.2)",
@@ -150,9 +151,9 @@ const UsersList = () => {
                                             <TableCell>
                                                 <Chip
                                                     label={user.role}
-                                                    size="small"
+
                                                     color={user.role === "ADMIN" ? "secondary" : "primary"}
-                                                    sx={{ fontWeight: 600 }}
+                                                    sx={{ fontWeight: 400, fontSize: "12px" }}
                                                 />
                                             </TableCell>
                                             <TableCell>
@@ -174,7 +175,7 @@ const UsersList = () => {
                                                                 : "error"
                                                     }
                                                     variant={status === "INVITED" ? "outlined" : "filled"}
-                                                    sx={{ fontWeight: 600 }}
+                                                    sx={{ fontWeight: 600, }}
                                                 />
                                             </TableCell>
                                             <TableCell align="center">
