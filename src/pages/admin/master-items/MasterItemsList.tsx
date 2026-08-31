@@ -78,6 +78,7 @@ const MasterItemsList = () => {
 
                     <Button
                         variant="contained"
+                        sx={{ fontSize: "12px" }}
                         startIcon={<Add />}
                         onClick={() => navigate("/admin/master-items/new")}
                     >
@@ -86,7 +87,7 @@ const MasterItemsList = () => {
 
 
                     <Button
-                        sx={{ cursor: "pointer", background: "#479759ff", color: "white" }}
+                        sx={{ cursor: "pointer", background: "#479759ff", color: "white", fontSize: "12px" }}
                         variant="outlined"
                         startIcon={<UploadOutlined />}
                         onClick={() => setOpenExcel(true)}

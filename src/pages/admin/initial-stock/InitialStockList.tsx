@@ -82,6 +82,7 @@ const InitialStockList = () => {
                 </Box>
                 <Box sx={{ display: "flex", gap: "5px", flexDirection: "row" }}>
                     <Button
+                        sx={{ fontSize: "12px" }}
                         variant="contained"
                         startIcon={<Add />}
                         onClick={() => navigate("/admin/initial-stock/new")}
@@ -90,8 +91,9 @@ const InitialStockList = () => {
                     </Button>
 
                     <Button
-                        sx={{ cursor: "pointer", background: "#479759ff", color: "white" }}
+                        sx={{ cursor: "pointer", background: "#479759ff", color: "white", fontSize: "12px" }}
                         variant="outlined"
+
                         startIcon={<UploadOutlined />}
                         onClick={() => setOpenExcel(true)}
 

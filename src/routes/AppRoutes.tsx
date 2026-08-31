@@ -20,6 +20,7 @@ import UsersList from "../pages/admin/users/UsersList";
 import UserForm from "../pages/admin/users/UserForm";
 import Summary from "../pages/admin/summary/Summary";
 import { ActivateAccount } from "../pages/ActivateAccount/ActivateAccount";
+import DistributionPlan from "../pages/admin/distribution-plan/DistributionPlan";
 
 const RootRedirect = () => {
   const location = useLocation();
@@ -112,6 +113,15 @@ const AppRoutes = () => (
             element={
               <AdminLayout>
                 <Summary />
+              </AdminLayout>
+            }
+          />
+
+          <Route
+            path="distribution-plan"
+            element={
+              <AdminLayout>
+                <DistributionPlan />
               </AdminLayout>
             }
           />
