@@ -1,6 +1,6 @@
 // components/layout/WarehouseHeader.jsx
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     AppBar,
     Toolbar,
@@ -15,12 +15,10 @@ import {
 } from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
 import { LogOut } from "lucide-react";
-import api from "../../services/api";
-import { WarehouseOutlined } from "@mui/icons-material";
 
 const WarehouseHeader = () => {
     const { user, logout } = useAuth();
-    
+
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
@@ -110,27 +108,29 @@ const WarehouseHeader = () => {
                         open={open}
                         onClose={handleClose}
                         onClick={handleClose}
-                        PaperProps={{
-                            elevation: 0,
-                            sx: {
-                                overflow: 'visible',
-                                filter: 'drop-shadow(0px 4px 20px rgba(0,0,0,0.1))',
-                                mt: 1.5,
-                                minWidth: 220,
-                                borderRadius: 3,
-                                '&::before': {
-                                    content: '""',
-                                    display: 'block',
-                                    position: 'absolute',
-                                    top: 0,
-                                    right: 20,
-                                    width: 10,
-                                    height: 10,
-                                    bgcolor: 'background.paper',
-                                    transform: 'translateY(-50%) rotate(45deg)',
-                                    zIndex: 0,
+                        slotProps={{
+                            paper: {
+                                elevation: 0,
+                                sx: {
+                                    overflow: 'visible',
+                                    filter: 'drop-shadow(0px 4px 20px rgba(0,0,0,0.1))',
+                                    mt: 1.5,
+                                    minWidth: 220,
+                                    borderRadius: 3,
+                                    '&::before': {
+                                        content: '""',
+                                        display: 'block',
+                                        position: 'absolute',
+                                        top: 0,
+                                        right: 20,
+                                        width: 10,
+                                        height: 10,
+                                        bgcolor: 'background.paper',
+                                        transform: 'translateY(-50%) rotate(45deg)',
+                                        zIndex: 0,
+                                    },
                                 },
-                            },
+                            }
                         }}
                         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}

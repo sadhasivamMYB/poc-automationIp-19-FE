@@ -100,7 +100,7 @@ const DistributionTab: React.FC<DistributionTabProps> = ({ minValues, phyValues,
         ];
         const headerRow2 = [
             "", "",
-            ...locations?.flatMap((e) => ["Phy stock", "Min stock", "Status"])
+            ...locations?.flatMap((_e) => ["Phy stock", "Min stock", "Status"])
         ];
 
         worksheet.addRow(headerRow1);
@@ -109,7 +109,7 @@ const DistributionTab: React.FC<DistributionTabProps> = ({ minValues, phyValues,
         // Merge headers
         worksheet.mergeCells('A1:A2');
         worksheet.mergeCells('B1:B2');
-        locations?.forEach((loc, index) => {
+        locations?.forEach((_loc, index) => {
             worksheet.mergeCells(`${String.fromCharCode(67 + (index * 3))}1:${String.fromCharCode(67 + (index * 3) + 2)}1`);
         });
         // Style headers

@@ -1,4 +1,4 @@
-import React, { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { Box, Toolbar, Typography, Paper } from "@mui/material";
 import { StorefrontOutlined } from "@mui/icons-material";
 import WarehouseSidebar from "../components/layout/WarehouseSidebar";

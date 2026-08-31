@@ -83,7 +83,7 @@ const DistributionPlan = () => {
         localStorage.setItem("distribution_phyValues", JSON.stringify(phyValues));
     }, [phyValues]);
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setTabIndex(newValue);
     };
 

@@ -45,7 +45,6 @@ const DebouncedTextField: React.FC<DebouncedTextFieldProps> = ({ value, onChange
             value={localValue}
             onChange={(e) => setLocalValue(e.target.value)}
             onBlur={handleBlur}
-            inputProps={{ min: 0 }}
             sx={{
                 width: 100,
                 '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
