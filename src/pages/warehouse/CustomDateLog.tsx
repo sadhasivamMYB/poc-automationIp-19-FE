@@ -72,44 +72,43 @@ const CustomDateLog = () => {
 
     return (
         <Box>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-                <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <p style={{ fontSize: "12px", color: "red", marginBottom: "-2px" }}>
-                        Select a date to see logs *</p>
+            <Paper elevation={0} sx={{ p: 2, mb: 4, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                        <Typography variant="caption" sx={{ color: "error.main", fontWeight: 500, fontSize: "12px" }}>
+                            Select a date to see logs *
+                        </Typography>
+                        <TextField
+                            size="small"
+                            type="date"
+                            value={selectedDate}
+                            onChange={(e) => setSelectedDate(e.target.value)}
+                            slotProps={{
+                                inputLabel: { shrink: true },
+                                htmlInput: { max: today }
+                            }}
+                            sx={{ width: 220, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                        />
+                    </Box>
+
                     <TextField
                         size="small"
-                        type="date"
-
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
+                        placeholder="Search by Item Code or Item Name..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        sx={{ width: 450, '& .MuiOutlinedInput-root': { borderRadius: 2, bgcolor: 'grey.50' } }}
                         slotProps={{
-                            inputLabel: { shrink: true },
-                            htmlInput: { max: today }
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchOutlined sx={{ fontSize: 20, color: "text.secondary" }} />
+                                    </InputAdornment>
+                                ),
+                            },
                         }}
-                        sx={{ width: 200 }}
                     />
-
                 </Box>
-
-
-
-                <TextField
-                    size="small"
-                    placeholder="Search by Item Code or Item Name"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    sx={{ width: 500 }}
-                    slotProps={{
-                        input: {
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <SearchOutlined sx={{ fontSize: 24, color: "#9ca3af" }} />
-                                </InputAdornment>
-                            ),
-                        },
-                    }}
-                />
-            </Box>
+            </Paper>
 
             {!selectedDate && (
                 <Box sx={{ mt: 3, p: 4, bgcolor: "#f8fafc", color: "#475569", borderRadius: 2, border: "1px dashed #cbd5e1", textAlign: "center" }}>

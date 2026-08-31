@@ -160,7 +160,7 @@ const DailyStock = () => {
     }
 
     return (
-        <Box>
+        <Box sx={{ width: "75vw" }}>
 
             {dialogOpen && <ConformationDialog open={dialogOpen} handleClose={() => setDialogOpen(false)} handleSubmit={handleConformationSubmit} />
             }
@@ -208,15 +208,17 @@ const DailyStock = () => {
                 component={Paper}
                 elevation={3}
                 sx={{
+                    maxHeight: "70vh",
                     borderRadius: 2,
                     overflow: "auto",
                 }}
             >
-                <Table size="small">
+                <Table size="small" stickyHeader sx={{ minWidth: 1000 }}>
                     <TableHead>
                         {/* Main Header */}
                         <TableRow
                             sx={{
+
                                 "& th": {
                                     bgcolor: "#5659ffff",
                                     color: "white",
@@ -225,8 +227,8 @@ const DailyStock = () => {
                                 },
                             }}
                         >
-                            <TableCell rowSpan={2}>Item Code</TableCell>
-                            <TableCell rowSpan={2}>Item Name</TableCell>
+                            <TableCell rowSpan={2} sx={{ position: "sticky", left: 0, zIndex: 3, width: 120, minWidth: 120, borderRight: "1px solid rgba(255,255,255,0.2)" }}>Item Code</TableCell>
+                            <TableCell rowSpan={2} sx={{ position: "sticky", left: 120, zIndex: 3, width: 250, minWidth: 250, borderRight: "2px solid rgba(255,255,255,0.2)" }}>Item Name</TableCell>
                             <TableCell rowSpan={2}>Bottle / Case</TableCell>
 
                             <TableCell colSpan={2}>Opening Stock</TableCell>
@@ -284,9 +286,8 @@ const DailyStock = () => {
                                         },
                                     }}
                                 >
-                                    <TableCell>{row.itemCode}</TableCell>
-
-                                    <TableCell>{row.itemName}</TableCell>
+                                    <TableCell sx={{ position: "sticky", left: 0, zIndex: 1, bgcolor: "background.paper", borderRight: "1px solid rgba(224, 224, 224, 1)" }}>{row.itemCode}</TableCell>
+                                    <TableCell sx={{ position: "sticky", left: 120, zIndex: 1, bgcolor: "background.paper", borderRight: "2px solid rgba(224, 224, 224, 1)", fontSize: "12px" }}>{row.itemName}</TableCell>
 
                                     <TableCell align="center">
                                         {row.bottlePerCase}
