@@ -220,85 +220,86 @@ const DistributionTab: React.FC<DistributionTabProps> = ({ minValues, phyValues,
                 </Box>
             </Box>
 
-            <TableContainer sx={{ maxHeight: "600px", width: "100%", maxWidth: "70vw", overflowX: "auto", overflowY: "auto" }}>            <Table size="small" stickyHeader sx={{ minWidth: 1200 }}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell rowSpan={2} sx={{ fontWeight: "bold", bgcolor: "background.default", borderRight: "1px solid rgba(224, 224, 224, 1)" }}>Item Code</TableCell>
-                        <TableCell rowSpan={2} sx={{ fontWeight: "bold", bgcolor: "background.default", borderRight: "1px solid rgba(224, 224, 224, 1)" }}>Item Name</TableCell>
-                        {locations.map((location) => (
-                            <TableCell
-                                key={location.warehouseCode}
-                                colSpan={3}
-                                align="center"
-                                sx={{ fontWeight: "bold", bgcolor: "background.default", borderRight: "1px solid rgba(224, 224, 224, 1)" }}
-                            >
-                                {location.warehouseName}
-                            </TableCell>
-                        ))}
-                    </TableRow>
-                    <TableRow>
-                        {locations.map((location) => (
-                            <React.Fragment key={location.warehouseCode}>
-                                <TableCell sx={{ fontWeight: "bold", fontSize: "12px", bgcolor: "background.default", width: "200px" }}>Physical Stock</TableCell>
-                                <TableCell sx={{ fontWeight: "bold", fontSize: "12px", bgcolor: "background.default", width: "200px" }}>Min Stock</TableCell>
-                                <TableCell sx={{ fontWeight: "bold", fontSize: "12px", bgcolor: "background.default", borderRight: "1px solid rgba(224, 224, 224, 1)", width: "200px" }}>Status</TableCell>
-                            </React.Fragment>
-                        ))}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {items.length === 0 ? (
+            <TableContainer sx={{ maxHeight: "600px", width: "100%", maxWidth: "70vw", overflowX: "auto", overflowY: "auto" }}>
+                <Table size="small" stickyHeader sx={{ minWidth: 800 }}>
+                    <TableHead >
                         <TableRow>
-                            <TableCell colSpan={17} align="center" sx={{ py: 3 }}>
-                                <Typography color="text.secondary">No items found.</Typography>
-                            </TableCell>
+                            <TableCell rowSpan={2} sx={{ position: "sticky", left: 0, zIndex: 3, width: 120, minWidth: 120, fontWeight: "bold", bgcolor: "background.default", borderRight: "1px solid rgba(224, 224, 224, 1)" }}>Item Code</TableCell>
+                            <TableCell rowSpan={2} sx={{ position: "sticky", left: 120, zIndex: 3, width: 250, minWidth: 250, fontWeight: "bold", bgcolor: "background.default", borderRight: "2px solid rgba(224, 224, 224, 1)" }}>Item Name</TableCell>
+                            {locations.map((location) => (
+                                <TableCell
+                                    key={location.warehouseCode}
+                                    colSpan={3}
+                                    align="center"
+                                    sx={{ fontWeight: "bold", bgcolor: "background.default", borderRight: "1px solid rgba(224, 224, 224, 1)" }}
+                                >
+                                    {location.warehouseName}
+                                </TableCell>
+                            ))}
                         </TableRow>
-                    ) : (
-                        items.map((item) => {
-                            const itemMin = minValues[item.itemCode] || locations.reduce((acc, location) => {
-                                acc[location.warehouseCode] = 0;
-                                return acc;
-                            }, {} as MinValuesRecord[string]);
+                        <TableRow>
+                            {locations.map((location) => (
+                                <React.Fragment key={location.warehouseCode}>
+                                    <TableCell sx={{ fontWeight: "bold", fontSize: "12px", bgcolor: "background.default", width: "200px" }}>Physical Stock</TableCell>
+                                    <TableCell sx={{ fontWeight: "bold", fontSize: "12px", bgcolor: "background.default", width: "200px" }}>Min Stock</TableCell>
+                                    <TableCell sx={{ fontWeight: "bold", fontSize: "12px", bgcolor: "background.default", borderRight: "1px solid rgba(224, 224, 224, 1)", width: "200px" }}>Status</TableCell>
+                                </React.Fragment>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {items.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={17} align="center" sx={{ py: 3 }}>
+                                    <Typography color="text.secondary">No items found.</Typography>
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            items.map((item) => {
+                                const itemMin = minValues[item.itemCode] || locations.reduce((acc, location) => {
+                                    acc[location.warehouseCode] = 0;
+                                    return acc;
+                                }, {} as MinValuesRecord[string]);
 
-                            const itemPhy = phyValues[item.itemCode] || locations.reduce((acc, location) => {
-                                acc[location.warehouseCode] = 0;
-                                return acc;
-                            }, {} as PhyValuesRecord[string]);
+                                const itemPhy = phyValues[item.itemCode] || locations.reduce((acc, location) => {
+                                    acc[location.warehouseCode] = 0;
+                                    return acc;
+                                }, {} as PhyValuesRecord[string]);
 
-                            return (
-                                <TableRow key={item.id}>
-                                    <TableCell sx={{ borderRight: "1px solid rgba(224, 224, 224, 1)", width: '100px' }}>{item.itemCode}</TableCell>
-                                    <TableCell sx={{ borderRight: "1px solid rgba(224, 224, 224, 1)", fontSize: '12px' }}>{item.itemName}</TableCell>
+                                return (
+                                    <TableRow key={item.id}>
+                                        <TableCell sx={{ position: "sticky", left: 0, zIndex: 1, bgcolor: "background.paper", borderRight: "1px solid rgba(224, 224, 224, 1)", width: '100px' }}>{item.itemCode}</TableCell>
+                                        <TableCell sx={{ position: "sticky", left: 120, zIndex: 1, bgcolor: "background.paper", borderRight: "2px solid rgba(224, 224, 224, 1)", fontSize: '12px' }}>{item.itemName}</TableCell>
 
-                                    {locations?.map((location) => {
-                                        const wKey = location.warehouseCode as keyof MinValuesRecord[string];
-                                        const min = itemMin[wKey];
-                                        const phy = itemPhy[wKey];
-                                        const statusObj = getStatus(min, phy);
+                                        {locations?.map((location) => {
+                                            const wKey = location.warehouseCode as keyof MinValuesRecord[string];
+                                            const min = itemMin[wKey];
+                                            const phy = itemPhy[wKey];
+                                            const statusObj = getStatus(min, phy);
 
-                                        return (
-                                            <React.Fragment key={location.warehouseCode}>
-                                                <TableCell>{phy}</TableCell>
-                                                <TableCell>{min}</TableCell>
-                                                <TableCell sx={{ borderRight: "1px solid rgba(224, 224, 224, 1)" }}>
-                                                    {statusObj.label !== "-" ? (
-                                                        <Chip
-                                                            label={statusObj.label}
-                                                            color={statusObj.color}
-                                                            size="small"
-                                                            sx={{ fontWeight: "bold", minWidth: 60 }}
-                                                        />
-                                                    ) : "-"}
-                                                </TableCell>
-                                            </React.Fragment>
-                                        );
-                                    })}
-                                </TableRow>
-                            );
-                        })
-                    )}
-                </TableBody>
-            </Table>
+                                            return (
+                                                <React.Fragment key={location.warehouseCode}>
+                                                    <TableCell>{phy}</TableCell>
+                                                    <TableCell>{min}</TableCell>
+                                                    <TableCell sx={{ borderRight: "1px solid rgba(224, 224, 224, 1)" }}>
+                                                        {statusObj.label !== "-" ? (
+                                                            <Chip
+                                                                label={statusObj.label}
+                                                                color={statusObj.color}
+                                                                size="small"
+                                                                sx={{ fontWeight: "bold", minWidth: 60 }}
+                                                            />
+                                                        ) : "-"}
+                                                    </TableCell>
+                                                </React.Fragment>
+                                            );
+                                        })}
+                                    </TableRow>
+                                );
+                            })
+                        )}
+                    </TableBody>
+                </Table>
             </TableContainer>
         </Box>
     );

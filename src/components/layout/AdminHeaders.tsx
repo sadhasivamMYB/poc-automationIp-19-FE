@@ -1,9 +1,20 @@
-import { AppBar, Toolbar, Typography, Button, Box, Avatar } from "@mui/material";
+import React, { useState } from "react";
+import { AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem, Divider, IconButton, Tooltip } from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
-import { LogOut } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 
 const AdminHeader = () => {
     const { user, logout } = useAuth();
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     return (
         <AppBar
@@ -40,31 +51,84 @@ const AdminHeader = () => {
                     </Typography>
                 </Box>
 
-                <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                        <Avatar sx={{ bgcolor: "primary.light" }}>
-                            {user?.fullName?.charAt(0) || "A"}
-                        </Avatar>
-                        <Box sx={{ display: { xs: "none", sm: "block" } }}>
-                            <Typography variant="body1" sx={{ fontWeight: 500, color: '#333' }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Box sx={{ display: { xs: "none", sm: "flex" }, flexDirection: "column", alignItems: "flex-end", mr: 1 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#333', lineHeight: 1.2 }}>
+                            {user?.fullName || "Admin User"}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 500 }}>
+                            {user?.role || "ADMIN"}
+                        </Typography>
+                    </Box>
+
+                    <Tooltip title="Account settings">
+                        <IconButton
+                            onClick={handleClick}
+                            size="small"
+                            aria-controls={open ? 'account-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={open ? 'true' : undefined}
+                            sx={{
+                                padding: 0.5,
+                                border: '2px solid transparent',
+                                transition: 'all 0.2s',
+                                '&:hover': {
+                                    borderColor: 'primary.main',
+                                    bgcolor: 'transparent'
+                                }
+                            }}
+                        >
+                            <Avatar sx={{ width: 40, height: 40, bgcolor: "primary.main", color: "white", fontWeight: "bold" }}>
+                                {user?.fullName?.charAt(0).toUpperCase() || "A"}
+                            </Avatar>
+                        </IconButton>
+                    </Tooltip>
+
+                    <Menu
+                        anchorEl={anchorEl}
+                        id="account-menu"
+                        open={open}
+                        onClose={handleClose}
+                        onClick={handleClose}
+                        PaperProps={{
+                            elevation: 0,
+                            sx: {
+                                overflow: 'visible',
+                                filter: 'drop-shadow(0px 4px 20px rgba(0,0,0,0.1))',
+                                mt: 1.5,
+                                minWidth: 220,
+                                borderRadius: 3,
+                                '&::before': {
+                                    content: '""',
+                                    display: 'block',
+                                    position: 'absolute',
+                                    top: 0,
+                                    right: 20,
+                                    width: 10,
+                                    height: 10,
+                                    bgcolor: 'background.paper',
+                                    transform: 'translateY(-50%) rotate(45deg)',
+                                    zIndex: 0,
+                                },
+                            },
+                        }}
+                        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                    >
+                        <Box sx={{ px: 2.5, py: 2 }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "text.primary" }}>
                                 {user?.fullName || "Admin User"}
                             </Typography>
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography variant="body2" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: '0.75rem', fontWeight: 600 }}>
                                 {user?.role || "ADMIN"}
                             </Typography>
                         </Box>
-                    </Box>
-
-                    <Button
-                        color="error"
-                        variant="outlined"
-                        size="small"
-                        onClick={logout}
-                        startIcon={<LogOut size={16} />}
-                        sx={{ textTransform: "none", borderRadius: 2 }}
-                    >
-                        Logout
-                    </Button>
+                        <Divider sx={{ my: 0 }} />
+                        <MenuItem onClick={logout} sx={{ color: "error.main", py: 1.5, px: 2.5, '&:hover': { bgcolor: 'error.50' } }}>
+                            <LogOut size={18} style={{ marginRight: '12px' }} />
+                            <Typography sx={{ fontWeight: 600 }}>Logout</Typography>
+                        </MenuItem>
+                    </Menu>
                 </Box>
             </Toolbar>
         </AppBar>

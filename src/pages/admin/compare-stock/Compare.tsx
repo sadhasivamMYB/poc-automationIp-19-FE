@@ -86,8 +86,8 @@ const CompareRow = React.memo(({ stock, onEditChange }: CompareRowProps) => {
 
     return (
         <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-            <TableCell>{stock.itemCode}</TableCell>
-            <TableCell>{stock.itemName}</TableCell>
+            <TableCell sx={{ position: "sticky", left: 0, zIndex: 1, bgcolor: "background.paper", borderRight: "1px solid rgba(224, 224, 224, 1)" }}>{stock.itemCode}</TableCell>
+            <TableCell sx={{ position: "sticky", left: 120, zIndex: 1, bgcolor: "background.paper", borderRight: "2px solid rgba(224, 224, 224, 1)", fontSize: "12px" }}>{stock.itemName}</TableCell>
             <TableCell align="center">{Number(stock.physicalStock || 0).toFixed(4)}</TableCell>
             <TableCell align="center">{stock.systemStock}</TableCell>
             <TableCell align="center">
@@ -562,7 +562,7 @@ const Compare = () => {
     };
 
     return (
-        <Box sx={{ p: 1, height: "100vh" }}>
+        <Box sx={{ p: 1, overflow: "auto", maxWidth: "78vw" }}>
             {openExcel && (
                 <ExcelUploadButton
                     open={openExcel}
@@ -699,14 +699,16 @@ const Compare = () => {
                         <Typography variant="body1" sx={{ fontWeight: 500 }}>No stock generated for the selected date.</Typography>
                     </Box>
                 ) : (
-                    <TableContainer sx={{ border: "1px solid", borderColor: "divider", borderRadius: 2, mt: 3, flexGrow: 1 }}>
-                        <Table sx={{ minWidth: 650, height: "100%" }} stickyHeader>
+                    <TableContainer sx={{ border: "1px solid", borderColor: "divider", borderRadius: 2, mt: 3, flexGrow: 1, maxHeight: "85vh" }}>
+                        <Table sx={{ minWidth: 1500, height: "100%" }} stickyHeader>
                             <TableHead>
                                 <TableRow>
                                     {
-                                        ["Item Code", "Item Name", "Physical Stock", "System Stock", "Manual", "Pending Supply", "Sales Return", "Blocked", "STO Pending", "GRN Pending", "Damages", "Difference"].map((e: string) => (
-                                            <TableCell key={e} sx={{ fontWeight: "bold", bgcolor: "background.default" }}>{e}</TableCell>
-                                        ))
+                                        ["Item Code", "Item Name", "Physical Stock", "System Stock", "Manual", "Pending Supply", "Sales Return", "Blocked", "STO Pending", "GRN Pending", "Damages", "Difference"].map((e: string, index: number) => {
+                                            if (index === 0) return <TableCell key={e} sx={{ fontWeight: "bold", bgcolor: "background.paper", position: "sticky", left: 0, zIndex: 3, minWidth: 120, borderRight: "1px solid rgba(224, 224, 224, 1)" }}>{e}</TableCell>;
+                                            if (index === 1) return <TableCell key={e} sx={{ fontWeight: "bold", bgcolor: "background.paper", position: "sticky", left: 120, zIndex: 3, minWidth: 250, borderRight: "2px solid rgba(224, 224, 224, 1)", fontSize: "12px" }}>{e}</TableCell>;
+                                            return <TableCell key={e} sx={{ fontWeight: "bold", bgcolor: "background.default", minWidth: 130 }}>{e}</TableCell>;
+                                        })
                                     }
                                 </TableRow>
                             </TableHead>
