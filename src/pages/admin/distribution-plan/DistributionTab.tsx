@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     Box,
     Button,
@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import { UploadOutlined, Download } from "@mui/icons-material";
 import ExcelJS from "exceljs";
-import api from "../../../services/api"
 import type { MinValuesRecord, PhyValuesRecord } from "./DistributionPlan";
 // import { MasterItem } from "../master-items/MasterItemsList";
 import ExcelUploadButton from "../../../components/ExcelFileUploadButton";
@@ -23,6 +22,9 @@ interface DistributionTabProps {
     minValues: MinValuesRecord;
     phyValues: PhyValuesRecord;
     setPhyValues: React.Dispatch<React.SetStateAction<PhyValuesRecord>>;
+    items: any[];
+    locations: any[];
+    loading: boolean;
 }
 
 const getStatus = (min: number, phy: number) => {
@@ -32,42 +34,8 @@ const getStatus = (min: number, phy: number) => {
     else return { label: "Ok", color: "success" as const };
 };
 
-const DistributionTab: React.FC<DistributionTabProps> = ({ minValues, phyValues, setPhyValues }) => {
-    const [items, setItems] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+const DistributionTab: React.FC<DistributionTabProps> = ({ minValues, phyValues, setPhyValues, items, locations, loading }) => {
     const [openExcel, setOpenExcel] = useState(false);
-    const [locations, setLocations] = useState<any[]>([]);
-
-    const fetchItems = async () => {
-        try {
-            const response = await api.get("/master-item");
-            if (response.data.success) {
-                setItems(response.data.data);
-            }
-        } catch (error) {
-            console.error("Failed to fetch master items", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchLocations = async () => {
-        try {
-            const response = await api.get("/warehouse");
-            if (response.data.success) {
-                setLocations(response.data.data);
-            }
-        } catch (error) {
-            console.error("Failed to fetch locations", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchItems();
-        fetchLocations()
-    }, []);
 
     const handleLocalUpload = (parsedData: any[]) => {
 
@@ -179,7 +147,7 @@ const DistributionTab: React.FC<DistributionTabProps> = ({ minValues, phyValues,
     if (loading) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
-                <CircularProgress />
+                <CircularProgress disableShrink size={40} />
             </Box>
         );
     }
@@ -190,9 +158,9 @@ const DistributionTab: React.FC<DistributionTabProps> = ({ minValues, phyValues,
                 <ExcelUploadButton
                     open={openExcel}
                     handleClose={() => setOpenExcel(false)}
-                    templateHeaders={["item_code", "item_name", "warehouse1", "warehouse2", "warehouse3", "warehouse4", "warehouse5"]}
+                    templateHeaders={["itemCode", "itemName", "warehouse1", "warehouse2", "warehouse3", "warehouse4", "warehouse5"]}
                     templateWidths={[{ wpx: 150 }, { wpx: 250 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 }]}
-                    templateFileName="physical_stock_template.xlsx"
+                    templateFileName="distributionPlanTemplate.xlsx"
                     onLocalUpload={handleLocalUpload}
                 />
             )}

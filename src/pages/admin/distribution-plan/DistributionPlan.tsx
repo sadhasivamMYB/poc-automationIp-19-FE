@@ -10,6 +10,7 @@ import {
 import { DeleteOutlined } from "@mui/icons-material";
 import MinValuesTab from "./MinValuesTab";
 import DistributionTab from "./DistributionTab";
+import api from "../../../services/api";
 
 export interface MinValuesRecord {
     [itemCode: string]: {
@@ -53,6 +54,42 @@ const DistributionPlan = () => {
     const [tabIndex, setTabIndex] = useState(0);
     const [minValues, setMinValues] = useState<MinValuesRecord>({});
     const [phyValues, setPhyValues] = useState<PhyValuesRecord>({});
+    
+    // Shared Master Data State
+    const [items, setItems] = useState<any[]>([]);
+    const [locations, setLocations] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    // Fetch Master Data once on mount
+    useEffect(() => {
+        const fetchItems = async () => {
+            const response = await api.get("/master-item");
+            return response.data.success ? response.data.data : [];
+        };
+
+        const fetchLocations = async () => {
+            const response = await api.get("/warehouse");
+            return response.data.success ? response.data.data : [];
+        };
+
+        const loadAllData = async () => {
+            setLoading(true);
+            try {
+                const [itemsData, locationsData] = await Promise.all([
+                    fetchItems(),
+                    fetchLocations()
+                ]);
+                setItems(itemsData);
+                setLocations(locationsData);
+            } catch (error) {
+                console.error("Failed to load data", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadAllData();
+    }, []);
 
     // Load from local storage on mount
     useEffect(() => {
@@ -104,7 +141,7 @@ const DistributionPlan = () => {
                         Distribution Plan
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        Manage minimum stock values and calculate distribution status (Temporary tool).
+                        Manage minimum stock values and calculate distribution status <span style={{ color: "red" }}>(Temporary Storage).</span>
                     </Typography>
                 </Box>
                 <Button
@@ -126,7 +163,13 @@ const DistributionPlan = () => {
                 </Box>
 
                 <CustomTabPanel value={tabIndex} index={0}>
-                    <MinValuesTab minValues={minValues} setMinValues={setMinValues} />
+                    <MinValuesTab 
+                        minValues={minValues} 
+                        setMinValues={setMinValues} 
+                        items={items}
+                        locations={locations}
+                        loading={loading}
+                    />
                 </CustomTabPanel>
 
                 <CustomTabPanel value={tabIndex} index={1}>
@@ -134,6 +177,9 @@ const DistributionPlan = () => {
                         minValues={minValues}
                         phyValues={phyValues}
                         setPhyValues={setPhyValues}
+                        items={items}
+                        locations={locations}
+                        loading={loading}
                     />
                 </CustomTabPanel>
             </Paper>

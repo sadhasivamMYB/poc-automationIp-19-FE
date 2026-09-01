@@ -48,7 +48,7 @@ const UsersList = () => {
     if (loading) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
-                <CircularProgress />
+                <CircularProgress disableShrink size={40} />
             </Box>
         );
     }
@@ -63,7 +63,7 @@ const UsersList = () => {
                 }}
                 open={mailLoading}
             >
-                <CircularProgress color="inherit" />
+                <CircularProgress disableShrink size={40} color="inherit" />
             </Backdrop>
             {/* Header Section */}
             <Box
@@ -151,9 +151,9 @@ const UsersList = () => {
                                             <TableCell>
                                                 <Chip
                                                     label={user.role}
-
+                                                    size="small"
                                                     color={user.role === "ADMIN" ? "secondary" : "primary"}
-                                                    sx={{ fontWeight: 400, fontSize: "12px" }}
+                                                    sx={{ fontWeight: 600 }}
                                                 />
                                             </TableCell>
                                             <TableCell>

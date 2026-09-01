@@ -121,7 +121,7 @@ const InitialStockForm = () => {
     if (loadingData) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
-                <CircularProgress />
+                <CircularProgress disableShrink size={40} />
             </Box>
         );
     }
