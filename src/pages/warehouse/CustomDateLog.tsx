@@ -148,7 +148,7 @@ const CustomDateLog = () => {
                             {loading ? (
                                 <TableRow>
                                     <TableCell colSpan={11} align="center" sx={{ py: 10 }}>
-                                        <CircularProgress size={40} thickness={4} />
+                                        <CircularProgress disableShrink size={40} thickness={4} />
                                         <Typography color="text.secondary" sx={{ mt: 2, fontWeight: 500 }}>Fetching Data...</Typography>
                                     </TableCell>
                                 </TableRow>

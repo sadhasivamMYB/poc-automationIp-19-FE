@@ -123,7 +123,7 @@ const UserForm = () => {
     if (loadingData) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
-                <CircularProgress />
+                <CircularProgress disableShrink size={40} />
             </Box>
         );
     }
@@ -139,7 +139,7 @@ const UserForm = () => {
                 }}
                 open={mailLoading}
             >
-                <CircularProgress color="inherit" />
+                <CircularProgress disableShrink size={40} color="inherit" />
             </Backdrop>
             <Box sx={{ display: "flex", alignItems: "center", mb: 4, gap: 2 }}>
                 <Button

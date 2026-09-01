@@ -11,13 +11,15 @@ import {
     Typography,
     CircularProgress,
 } from "@mui/material";
-import api from "../../../services/api";
 import type { MinValuesRecord } from "./DistributionPlan";
 // import { MasterItem } from "../master-items/MasterItemsList";
 
 interface MinValuesTabProps {
     minValues: MinValuesRecord;
     setMinValues: React.Dispatch<React.SetStateAction<MinValuesRecord>>;
+    items: any[];
+    locations: any[];
+    loading: boolean;
 }
 
 interface DebouncedTextFieldProps {
@@ -67,62 +69,41 @@ interface MemoizedRowProps {
 
 const MemoizedRow = React.memo(({ item, locations, currentVals, onChange }: MemoizedRowProps) => {
     return (
-        <TableRow>
-            <TableCell sx={{ position: "sticky", left: 0, zIndex: 1, bgcolor: "background.paper", borderRight: "1px solid rgba(224, 224, 224, 1)" }}>{item.itemCode}</TableCell>
-            <TableCell sx={{ position: "sticky", left: 120, zIndex: 1, bgcolor: "background.paper", borderRight: "2px solid rgba(224, 224, 224, 1)", fontSize: "12px" }}>{item.itemName}</TableCell>
-            {locations?.map((location) => {
-                const wKey = location.warehouseCode;
-                const val = currentVals ? currentVals[wKey] : 0;
-                return (
-                    <TableCell key={wKey}>
-                        <DebouncedTextField
-                            value={val || ""}
-                            onChange={(newVal) => onChange(item.itemCode, wKey, newVal)}
-                        />
-                    </TableCell>
-                );
-            })}
-        </TableRow>
+        <>
+            {
+                item.length > 0 && locations.length > 0 ? (
+                    <>
+                        <TableRow>
+                            <TableCell colSpan={locations.length + 2} sx={{ py: 1, bgcolor: "grey.50" }}>
+                                <CircularProgress disableShrink size={40} />
+                            </TableCell>
+                        </TableRow>
+                    </>
+                ) :
+                    <TableRow>
+                        <TableCell sx={{ position: "sticky", left: 0, zIndex: 1, bgcolor: "background.paper", borderRight: "1px solid rgba(224, 224, 224, 1)" }}>{item.itemCode}</TableCell>
+                        <TableCell sx={{ position: "sticky", left: 120, zIndex: 1, bgcolor: "background.paper", borderRight: "2px solid rgba(224, 224, 224, 1)", fontSize: "12px" }}>{item.itemName}</TableCell>
+                        {locations?.map((location) => {
+                            const wKey = location.warehouseCode;
+                            const val = currentVals ? currentVals[wKey] : 0;
+                            return (
+                                <TableCell key={wKey}>
+                                    <DebouncedTextField
+                                        value={val || ""}
+                                        onChange={(newVal) => onChange(item.itemCode, wKey, newVal)}
+                                    />
+                                </TableCell>
+                            );
+                        })}
+                    </TableRow>
+            }
+        </>
     );
 }, (prevProps, nextProps) => {
     return prevProps.currentVals === nextProps.currentVals && prevProps.locations === nextProps.locations;
 });
 
-const MinValuesTab: React.FC<MinValuesTabProps> = ({ minValues, setMinValues }) => {
-    const [items, setItems] = useState<any[]>([]);
-    const [locations, setLocations] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    const fetchItems = async () => {
-        try {
-            const response = await api.get("/master-item");
-            if (response.data.success) {
-                setItems(response.data.data);
-            }
-        } catch (error) {
-            console.error("Failed to fetch master items", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchLocations = async () => {
-        try {
-            const response = await api.get("/warehouse");
-            if (response.data.success) {
-                setLocations(response.data.data);
-            }
-        } catch (error) {
-            console.error("Failed to fetch locations", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchItems();
-        fetchLocations()
-    }, []);
+const MinValuesTab: React.FC<MinValuesTabProps> = ({ minValues, setMinValues, items, locations, loading }) => {
 
     console.log(locations)
 
@@ -149,8 +130,9 @@ const MinValuesTab: React.FC<MinValuesTabProps> = ({ minValues, setMinValues }) 
 
     if (loading) {
         return (
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
-                <CircularProgress />
+            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, mt: 5 }}>
+                <CircularProgress disableShrink size={40} />
+                <Typography variant="body1" color="text.secondary">Loading...</Typography>
             </Box>
         );
     }

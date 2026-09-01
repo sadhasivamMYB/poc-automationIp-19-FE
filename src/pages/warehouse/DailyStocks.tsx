@@ -265,7 +265,7 @@ const DailyStock = () => {
                         {loading ? (
                             <TableRow>
                                 <TableCell colSpan={11} align="center" sx={{ py: 16 }}>
-                                    <CircularProgress size={40} thickness={4} />
+                                    <CircularProgress disableShrink size={40} />
                                     <Typography color="text.secondary" sx={{ mt: 2, fontWeight: 500 }}>Fetching Data...</Typography>
                                 </TableCell>
                             </TableRow>
