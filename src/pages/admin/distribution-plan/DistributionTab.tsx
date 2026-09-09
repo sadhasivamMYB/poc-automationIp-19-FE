@@ -41,15 +41,21 @@ const DistributionTab: React.FC<DistributionTabProps> = ({ minValues, phyValues,
 
         const newPhyValues: PhyValuesRecord = { ...phyValues };
 
+        console.log("parsedData", parsedData);
+
 
         parsedData.forEach(row => {
-            // Support both item_code and ItemCode as keys from excel
-            const code = row["item_code"] || row["ItemCode"] || row["itemCode"];
+            // Support multiple keys from excel for item code
+            const code = row["item_code"] || row["ItemCode"] || row["itemCode"] || row["Item code"] || row["ITEM CODE"] || row["Storage Location"];
 
-            if (code) {
+            console.log("code 👋👋👋", code);
+
+
+            if (code && String(code).trim() !== "ITEM CODE" && String(code).trim() !== "Total") {
                 const itemCode = String(code).trim();
                 newPhyValues[itemCode] = locations?.reduce<any>((acc, loc) => {
-                    acc[loc.warehouseCode] = Number(row[loc.warehouseCode]).toFixed(3) || 0;
+                    const val = Number(row[loc.warehouseCode]);
+                    acc[loc.warehouseCode] = isNaN(val) ? 0 : Number(val.toFixed(3));
                     return acc;
                 }, {} as any);
             }
