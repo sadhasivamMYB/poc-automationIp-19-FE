@@ -8,11 +8,11 @@ export const localStorageSchema = z.object({
 
 export const getValidatedLocalStorage = () => {
     try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("sms.token");
         const userStr = localStorage.getItem("user");
-        
+
         const user = userStr && userStr !== "undefined" ? JSON.parse(userStr) : null;
-        
+
         return localStorageSchema.parse({
             token,
             user

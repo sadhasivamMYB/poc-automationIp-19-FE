@@ -12,6 +12,7 @@ import {
     InputAdornment,
     Typography,
     CircularProgress,
+    Alert,
 } from "@mui/material";
 import { SearchOutlined } from "@mui/icons-material";
 import api from "../../services/api";
@@ -25,12 +26,14 @@ const CustomDateLog = () => {
     const [selectedDate, setSelectedDate] = useState("");
     const [loading, setLoading] = useState(false);
     const [hasData, setHasData] = useState(true);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const today = new Date().toISOString().split("T")[0];
 
     const fetchData = async (date: string) => {
         if (!date) return;
         setLoading(true);
+        setErrorMessage(null);
         try {
             const response = await api.get("/daily-stock/history", {
                 params: {
@@ -42,15 +45,19 @@ const CustomDateLog = () => {
             if (response.data.success && response.data.data && response.data.data.length > 0) {
                 setRows(response.data.data);
                 setHasData(true);
+                setErrorMessage(null);
             } else {
                 setHasData(false);
                 setRows([]);
+                setErrorMessage(response.data.message || "No items found for the selected date.");
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to fetch custom date log", error);
-            toast.error("Failed to fetch log for the selected date");
+            const msg = error?.response?.data?.message || "Failed to fetch log for the selected date";
+            toast.error(msg);
             setRows([]);
             setHasData(false);
+            setErrorMessage(msg);
         } finally {
             setLoading(false);
         }
@@ -62,6 +69,7 @@ const CustomDateLog = () => {
         } else {
             setRows([]);
             setHasData(true);
+            setErrorMessage(null);
         }
     }, [selectedDate, user?.warehouseId]);
 
@@ -110,74 +118,95 @@ const CustomDateLog = () => {
                 </Box>
             </Paper>
 
-            {!selectedDate && (
+            {!selectedDate ? (
                 <Box sx={{ mt: 3, p: 4, bgcolor: "#f8fafc", color: "#475569", borderRadius: 2, border: "1px dashed #cbd5e1", textAlign: "center" }}>
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>Please select a date to view Stock.</Typography>
                 </Box>
-            )}
-
-            {selectedDate && hasData && (
-                <TableContainer
-                    component={Paper}
-                    elevation={3}
-                    sx={{ borderRadius: 2, overflow: "auto" }}
+            ) : loading ? (
+                <Box sx={{ mt: 3, p: 8, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", bgcolor: "#fff", borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
+                    <CircularProgress disableShrink size={40} thickness={4} />
+                    <Typography color="text.secondary" sx={{ mt: 2, fontWeight: 500 }}>Fetching Data...</Typography>
+                </Box>
+            ) : errorMessage ? (
+                <Alert
+                    severity="error"
+                    sx={{
+                        mt: 3,
+                        p: 2,
+                        borderRadius: 2,
+                        border: "1px solid",
+                        borderColor: "error.light",
+                        alignItems: "center",
+                        "& .MuiAlert-icon": {
+                            fontSize: 24,
+                            alignSelf: "center",
+                        },
+                        "& .MuiAlert-message": {
+                            fontWeight: 500,
+                            fontSize: "14px",
+                        },
+                    }}
                 >
-                    <Table size="small">
-                        <TableHead>
-                            <TableRow sx={{ "& th": { bgcolor: "#5659ffff", color: "white", fontWeight: 400, textAlign: "center" } }}>
-                                <TableCell rowSpan={2}>Item Code</TableCell>
-                                <TableCell rowSpan={2}>Item Name</TableCell>
-                                <TableCell rowSpan={2}>Bottle / Case</TableCell>
-                                <TableCell colSpan={2}>Opening Stock</TableCell>
-                                <TableCell colSpan={2}>Received Stock</TableCell>
-                                <TableCell colSpan={2}>Issued Stock</TableCell>
-                                <TableCell colSpan={2}>Closing Stock</TableCell>
-                            </TableRow>
-                            <TableRow sx={{ "& th": { bgcolor: "grey.100", fontWeight: 400, textAlign: "center" } }}>
-                                <TableCell>Cases</TableCell>
-                                <TableCell>Bottles</TableCell>
-                                <TableCell>Cases</TableCell>
-                                <TableCell>Bottles</TableCell>
-                                <TableCell>Cases</TableCell>
-                                <TableCell>Bottles</TableCell>
-                                <TableCell>Cases</TableCell>
-                                <TableCell>Bottles</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {loading ? (
-                                <TableRow>
-                                    <TableCell colSpan={11} align="center" sx={{ py: 10 }}>
-                                        <CircularProgress disableShrink size={40} thickness={4} />
-                                        <Typography color="text.secondary" sx={{ mt: 2, fontWeight: 500 }}>Fetching Data...</Typography>
-                                    </TableCell>
+                    {errorMessage}
+                </Alert>
+            ) : (
+                hasData && (
+                    <TableContainer
+                        component={Paper}
+                        elevation={3}
+                        sx={{ borderRadius: 2, overflow: "auto" }}
+                    >
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow sx={{ "& th": { bgcolor: "#5659ffff", color: "white", fontWeight: 400, textAlign: "center" } }}>
+                                    <TableCell rowSpan={2}>Item Code</TableCell>
+                                    <TableCell rowSpan={2}>Item Name</TableCell>
+                                    <TableCell rowSpan={2}>Bottle / Case</TableCell>
+                                    <TableCell colSpan={2}>Opening Stock</TableCell>
+                                    <TableCell colSpan={2}>Received Stock</TableCell>
+                                    <TableCell colSpan={2}>Issued Stock</TableCell>
+                                    <TableCell colSpan={2}>Closing Stock</TableCell>
                                 </TableRow>
-                            ) : filterdData?.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={11} align="center" sx={{ py: 18 }}>
-                                        <Typography color="text.secondary">No items to display.</Typography>
-                                    </TableCell>
+                                <TableRow sx={{ "& th": { bgcolor: "grey.100", fontWeight: 400, textAlign: "center" } }}>
+                                    <TableCell>Cases</TableCell>
+                                    <TableCell>Bottles</TableCell>
+                                    <TableCell>Cases</TableCell>
+                                    <TableCell>Bottles</TableCell>
+                                    <TableCell>Cases</TableCell>
+                                    <TableCell>Bottles</TableCell>
+                                    <TableCell>Cases</TableCell>
+                                    <TableCell>Bottles</TableCell>
                                 </TableRow>
-                            ) :
-                                filterdData?.map((row) => (
-                                    <TableRow key={row.id} hover sx={{ "&:nth-of-type(even)": { bgcolor: "grey.50" } }}>
-                                        <TableCell>{row.itemCode}</TableCell>
-                                        <TableCell>{row.itemName}</TableCell>
-                                        <TableCell align="center">{row.bottlePerCase}</TableCell>
-
-                                        <TableCell align="center">{row.openingCases}</TableCell>
-                                        <TableCell align="center">{row.openingBottles}</TableCell>
-                                        <TableCell align="center">{row.receivedCases}</TableCell>
-                                        <TableCell align="center">{row.receivedBottles}</TableCell>
-                                        <TableCell align="center">{row.issuedCases}</TableCell>
-                                        <TableCell align="center">{row.issuedBottles}</TableCell>
-                                        <TableCell align="center">{row.closingCases || 0}</TableCell>
-                                        <TableCell align="center">{row.closingBottles || 0}</TableCell>
+                            </TableHead>
+                            <TableBody>
+                                {filterdData?.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={11} align="center" sx={{ py: 18 }}>
+                                            <Typography color="text.secondary">No items to display.</Typography>
+                                        </TableCell>
                                     </TableRow>
-                                ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                ) : (
+                                    filterdData?.map((row) => (
+                                        <TableRow key={row.id} hover sx={{ "&:nth-of-type(even)": { bgcolor: "grey.50" } }}>
+                                            <TableCell>{row.itemCode}</TableCell>
+                                            <TableCell>{row.itemName}</TableCell>
+                                            <TableCell align="center">{row.bottlePerCase}</TableCell>
+
+                                            <TableCell align="center">{row.openingCases}</TableCell>
+                                            <TableCell align="center">{row.openingBottles}</TableCell>
+                                            <TableCell align="center">{row.receivedCases}</TableCell>
+                                            <TableCell align="center">{row.receivedBottles}</TableCell>
+                                            <TableCell align="center">{row.issuedCases}</TableCell>
+                                            <TableCell align="center">{row.issuedBottles}</TableCell>
+                                            <TableCell align="center">{row.closingCases || 0}</TableCell>
+                                            <TableCell align="center">{row.closingBottles || 0}</TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                )
             )}
         </Box>
     );
