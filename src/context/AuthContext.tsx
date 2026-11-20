@@ -21,12 +21,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
-    const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
+    const [token, setToken] = useState<string | null>(localStorage.getItem("sms.token"));
     const [loading, setLoading] = useState(true);
     const [fileName, setFileName] = useState("");
 
     const internalLogin = (newToken: string, newUser: User) => {
-        localStorage.setItem("token", newToken);
+        localStorage.setItem("sms.token", newToken);
         localStorage.setItem("user", JSON.stringify(newUser));
         setToken(newToken);
         setUser(newUser);
